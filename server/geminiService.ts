@@ -6,7 +6,7 @@
 // 🌍 SISTEMA DE TRADUCCIÓN
 import { translateWorkoutPlan, translateExerciseNamesInText } from './utils/exerciseTranslations';
 
-const GEMINI_API_KEY = 'AIzaSyCFR2kApUeCGSWOf_tkcLe1XH4qgKjDVJ0';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyCFR2kApUeCGSWOf_tkcLe1XH4qgKjDVJ0';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 interface GeminiRequest {
