@@ -11,6 +11,12 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        // Luxury colors from fitbro-landing - usando variables CSS
+        'luxury-black': 'hsl(var(--luxury-black))',
+        'luxury-gold': 'hsl(var(--luxury-gold))',
+        'luxury-charcoal': 'hsl(var(--luxury-charcoal))',
+        'light-gold': 'hsl(var(--light-gold))',
+
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -83,6 +89,11 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        'bounce': 'bounce 1s infinite',
+      },
+      animationDelay: {
+        '100': '0.1s',
+        '200': '0.2s',
       },
     },
   },

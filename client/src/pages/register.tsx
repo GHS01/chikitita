@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { registerSchema, type RegisterData } from "@shared/schema";
 import { Dumbbell } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
   const { register, isLoading } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
+  const { t } = useTranslation();
 
   const form = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
@@ -37,13 +40,15 @@ export default function Register() {
     try {
       await register(data);
       toast({
-        title: "Welcome to FitBud AI!",
-        description: "Your account has been created successfully.",
+        title: "¡Bienvenido a Fitbro!",
+        description: t('auth.registerSuccess'),
       });
+      // Redirect to profile after successful registration to complete setup
+      setLocation("/profile");
     } catch (error) {
       toast({
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "Please try again",
+        title: t('auth.registerError'),
+        description: error instanceof Error ? error.message : "Por favor intenta de nuevo",
         variant: "destructive",
       });
     }
@@ -58,19 +63,19 @@ export default function Register() {
               <Dumbbell className="h-8 w-8" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-primary">Join FitBud AI</CardTitle>
-          <CardDescription>Create your personalized fitness journey</CardDescription>
+          <CardTitle className="text-2xl font-bold text-primary">Join Fitbro</CardTitle>
+          <CardDescription>{t('auth.joinFitnessJourney')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>First Name</FormLabel>
+                      <FormLabel>{t('auth.firstName')}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -83,7 +88,7 @@ export default function Register() {
                   name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Last Name</FormLabel>
+                      <FormLabel>{t('auth.lastName')}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -98,9 +103,13 @@ export default function Register() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>{t('auth.username')}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        autoComplete="off"
+                        placeholder={t('auth.enterUsername')}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,9 +121,14 @@ export default function Register() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t('auth.email')}</FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} />
+                      <Input
+                        type="email"
+                        {...field}
+                        autoComplete="off"
+                        placeholder={t('auth.enterEmail')}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -127,9 +141,14 @@ export default function Register() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>{t('auth.password')}</FormLabel>
                       <FormControl>
-                        <Input type="password" {...field} />
+                        <Input
+                          type="password"
+                          {...field}
+                          autoComplete="new-password"
+                          placeholder={t('auth.enterPassword')}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -140,9 +159,14 @@ export default function Register() {
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
+                      <FormLabel>{t('auth.confirmPassword')}</FormLabel>
                       <FormControl>
-                        <Input type="password" {...field} />
+                        <Input
+                          type="password"
+                          {...field}
+                          autoComplete="new-password"
+                          placeholder={t('auth.confirmPassword')}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -242,11 +266,10 @@ export default function Register() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="weight_loss">Weight Loss</SelectItem>
-                          <SelectItem value="muscle_gain">Muscle Gain</SelectItem>
-                          <SelectItem value="strength">Strength Training</SelectItem>
-                          <SelectItem value="endurance">Endurance</SelectItem>
-                          <SelectItem value="general_fitness">General Fitness</SelectItem>
+                          <SelectItem value="lose_weight">Weight Loss</SelectItem>
+                          <SelectItem value="gain_muscle">Muscle Gain</SelectItem>
+                          <SelectItem value="maintain">Maintain Weight</SelectItem>
+                          <SelectItem value="improve_endurance">Improve Endurance</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -256,15 +279,15 @@ export default function Register() {
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating account..." : "Create Account"}
+                {isLoading ? t('auth.signingUp') : t('auth.registerButton')}
               </Button>
             </form>
           </Form>
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
+              {t('auth.alreadyHaveAccount')}{" "}
               <Link href="/" className="text-primary hover:underline font-medium">
-                Sign in
+                {t('auth.signIn')}
               </Link>
             </p>
           </div>

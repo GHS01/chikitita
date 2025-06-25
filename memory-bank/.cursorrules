@@ -1,0 +1,23 @@
+# .cursorrules
+
+## Patrón ID: PAT-001
+**Descripción**: Interfaces minimalistas.
+**Contexto**: Khan solicita sistemas que conserven energía.
+**Aplicación**: Usar CSS ligero.
+**Fecha**: 05-06-2025
+
+## Patrón ID: PAT-002
+**Descripción**: Errores de event listeners.
+**Contexto**: Botones no responden en interfaz.
+**Aplicación**: Verificar listeners en cada componente.
+**Fecha**: 05-06-2025
+
+## Patrón ID: PAT-003
+**Descripción**: Replicación de diseños de fitbro-landing.
+**Contexto**: Khan solicita usar diseños exactos del proyecto de referencia.
+**Aplicación**: 
+- Usar iconos de Icons8 con filter brightness-0
+- Gradientes dorados: from-luxury-gold to-light-gold
+- Tamaños responsive: w-8 h-8 sm:w-10 sm:h-10
+- Efectos hover con sombra dorada
+**Fecha**: 05-06-2025

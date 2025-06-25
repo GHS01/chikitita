@@ -1,8 +1,10 @@
-import { 
+import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Legend
 } from 'recharts';
 import { format, parseISO, subDays } from 'date-fns';
+// 🕐 SISTEMA HORARIO CENTRALIZADO
+import { formatProgressDate } from '@/utils/timeFormatters';
 
 interface ProgressChartProps {
   data: any[];
@@ -37,13 +39,13 @@ export default function ProgressChart({ data, type, height = 300 }: ProgressChar
               subDays(parseISO(session.startedAt), new Date(session.startedAt).getDay()),
               'MMM dd'
             );
-            
+
             if (!acc[weekStart]) {
               acc[weekStart] = { date: weekStart, workouts: 0, volume: 0 };
             }
-            
+
             acc[weekStart].workouts += 1;
-            
+
             // Calculate volume if exercise data is available
             if (session.exercises) {
               const sessionVolume = session.exercises.reduce((vol: number, ex: any) => {
@@ -51,10 +53,10 @@ export default function ProgressChart({ data, type, height = 300 }: ProgressChar
               }, 0);
               acc[weekStart].volume += sessionVolume;
             }
-            
+
             return acc;
           }, {});
-        
+
         return Object.values(weeklyData).slice(-8); // Last 8 weeks
 
       case 'measurements':
@@ -109,17 +111,17 @@ export default function ProgressChart({ data, type, height = 300 }: ProgressChar
         return (
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
-            <XAxis 
-              dataKey="date" 
+            <XAxis
+              dataKey="date"
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
             />
-            <YAxis 
+            <YAxis
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
               domain={['dataMin - 2', 'dataMax + 2']}
             />
-            <Tooltip 
+            <Tooltip
               contentStyle={{
                 backgroundColor: 'hsl(var(--card))',
                 border: '1px solid hsl(var(--border))',
@@ -128,10 +130,10 @@ export default function ProgressChart({ data, type, height = 300 }: ProgressChar
               labelFormatter={(label) => `Date: ${label}`}
               formatter={(value: number) => [`${value} kg`, 'Weight']}
             />
-            <Line 
-              type="monotone" 
-              dataKey="weight" 
-              stroke="hsl(var(--secondary))" 
+            <Line
+              type="monotone"
+              dataKey="weight"
+              stroke="hsl(var(--secondary))"
               strokeWidth={3}
               dot={{ fill: 'hsl(var(--secondary))', strokeWidth: 2, r: 4 }}
               activeDot={{ r: 6, stroke: 'hsl(var(--secondary))' }}
@@ -143,16 +145,16 @@ export default function ProgressChart({ data, type, height = 300 }: ProgressChar
         return (
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
-            <XAxis 
-              dataKey="date" 
+            <XAxis
+              dataKey="date"
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
             />
-            <YAxis 
+            <YAxis
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
             />
-            <Tooltip 
+            <Tooltip
               contentStyle={{
                 backgroundColor: 'hsl(var(--card))',
                 border: '1px solid hsl(var(--border))',
@@ -160,9 +162,9 @@ export default function ProgressChart({ data, type, height = 300 }: ProgressChar
               }}
             />
             <Legend />
-            <Bar 
-              dataKey="workouts" 
-              fill="hsl(var(--primary))" 
+            <Bar
+              dataKey="workouts"
+              fill="hsl(var(--primary))"
               name="Workouts"
               radius={[4, 4, 0, 0]}
             />
@@ -173,16 +175,16 @@ export default function ProgressChart({ data, type, height = 300 }: ProgressChar
         return (
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
-            <XAxis 
-              dataKey="date" 
+            <XAxis
+              dataKey="date"
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
             />
-            <YAxis 
+            <YAxis
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
             />
-            <Tooltip 
+            <Tooltip
               contentStyle={{
                 backgroundColor: 'hsl(var(--card))',
                 border: '1px solid hsl(var(--border))',
@@ -191,30 +193,30 @@ export default function ProgressChart({ data, type, height = 300 }: ProgressChar
             />
             <Legend />
             {chartData.some(d => d.waist) && (
-              <Line 
-                type="monotone" 
-                dataKey="waist" 
-                stroke="hsl(var(--primary))" 
+              <Line
+                type="monotone"
+                dataKey="waist"
+                stroke="hsl(var(--primary))"
                 name="Waist (cm)"
                 strokeWidth={2}
                 dot={{ r: 3 }}
               />
             )}
             {chartData.some(d => d.chest) && (
-              <Line 
-                type="monotone" 
-                dataKey="chest" 
-                stroke="hsl(var(--secondary))" 
+              <Line
+                type="monotone"
+                dataKey="chest"
+                stroke="hsl(var(--secondary))"
                 name="Chest (cm)"
                 strokeWidth={2}
                 dot={{ r: 3 }}
               />
             )}
             {chartData.some(d => d.arms) && (
-              <Line 
-                type="monotone" 
-                dataKey="arms" 
-                stroke="hsl(var(--accent))" 
+              <Line
+                type="monotone"
+                dataKey="arms"
+                stroke="hsl(var(--accent))"
                 name="Arms (cm)"
                 strokeWidth={2}
                 dot={{ r: 3 }}

@@ -32,7 +32,7 @@ export default function PhotoUpload({ isOpen, onClose, onSuccess }: PhotoUploadP
         method: 'POST',
         body: formData,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`, // 🔧 FIX: Use correct token key
         },
       });
 

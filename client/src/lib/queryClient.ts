@@ -12,9 +12,20 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  // Import authService here to avoid circular dependency
+  const { authService } = await import("./auth");
+
+  const headers: Record<string, string> = {
+    ...authService.getAuthHeader(),
+  };
+
+  if (data) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -29,8 +40,14 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    // Import authService here to avoid circular dependency
+    const { authService } = await import("./auth");
+
     const res = await fetch(queryKey[0] as string, {
       credentials: "include",
+      headers: {
+        ...authService.getAuthHeader(),
+      },
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
@@ -47,7 +64,7 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      staleTime: 0, // Allow immediate refetching
       retry: false,
     },
     mutations: {

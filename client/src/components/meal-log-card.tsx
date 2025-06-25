@@ -2,11 +2,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UtensilsCrossed, Trash2, Eye, MoreVertical } from "lucide-react";
-import { 
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import type { Meal } from "@shared/schema";
+// 🕐 SISTEMA HORARIO CENTRALIZADO
+import { formatMealTime } from '@/utils/timeFormatters';
 
 interface MealLogCardProps {
   meal: Meal;
@@ -15,15 +17,15 @@ interface MealLogCardProps {
   showActions?: boolean;
 }
 
-export default function MealLogCard({ 
-  meal, 
-  onDelete, 
-  onViewDetails, 
-  showActions = true 
+export default function MealLogCard({
+  meal,
+  onDelete,
+  onViewDetails,
+  showActions = true
 }: MealLogCardProps) {
   const mealTypeColors = {
     breakfast: "bg-amber-100 text-amber-800 border-amber-200",
-    lunch: "bg-green-100 text-green-800 border-green-200", 
+    lunch: "bg-green-100 text-green-800 border-green-200",
     dinner: "bg-blue-100 text-blue-800 border-blue-200",
     snack: "bg-purple-100 text-purple-800 border-purple-200",
   };
@@ -31,10 +33,7 @@ export default function MealLogCard({
   const mealTypeColor = mealTypeColors[meal.mealType as keyof typeof mealTypeColors] || mealTypeColors.snack;
 
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
+    return formatMealTime(new Date(dateString)); // 🕐 SISTEMA CENTRALIZADO
   };
 
   return (
@@ -45,8 +44,8 @@ export default function MealLogCard({
             {/* Meal Icon/Image */}
             <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0">
               {meal.imageUrl ? (
-                <img 
-                  src={meal.imageUrl} 
+                <img
+                  src={meal.imageUrl}
                   alt={meal.name}
                   className="w-full h-full object-cover rounded-lg"
                 />
@@ -54,12 +53,12 @@ export default function MealLogCard({
                 <UtensilsCrossed className="h-6 w-6 text-primary" />
               )}
             </div>
-            
+
             {/* Meal Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2 mb-1">
-                <Badge 
-                  variant="outline" 
+                <Badge
+                  variant="outline"
                   className={`text-xs capitalize ${mealTypeColor}`}
                 >
                   {meal.mealType}
@@ -68,9 +67,9 @@ export default function MealLogCard({
                   {formatTime(meal.loggedAt!)}
                 </Badge>
               </div>
-              
+
               <h4 className="font-medium text-sm truncate">{meal.name}</h4>
-              
+
               {meal.description && (
                 <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                   {meal.description}
@@ -85,7 +84,7 @@ export default function MealLogCard({
               <p className="text-lg font-bold font-mono">{meal.calories}</p>
               <p className="text-xs text-muted-foreground">calories</p>
             </div>
-            
+
             {showActions && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -101,7 +100,7 @@ export default function MealLogCard({
                     </DropdownMenuItem>
                   )}
                   {onDelete && (
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => onDelete(meal.id)}
                       className="text-destructive focus:text-destructive"
                     >

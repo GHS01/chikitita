@@ -1,9 +1,9 @@
 
 
-### Prompt para Crear una Aplicación Similar a Fitbud AI en Replit (Sin Base de Datos Específica)
+### Prompt para Crear una Aplicación Similar a Fitbro en Replit (Sin Base de Datos Específica)
 
-**Objetivo:**  
-Desarrollar una aplicación web de fitness impulsada por inteligencia artificial que ofrezca planes de entrenamiento y nutrición personalizados, análisis de alimentos a través de fotos y seguimiento en tiempo real del progreso, inspirada en Fitbud AI. La aplicación debe ser intuitiva, segura, escalable y replicar las características distintivas de Fitbud AI, dejando la elección del sistema de almacenamiento de datos al desarrollador.
+**Objetivo:**
+Desarrollar una aplicación web de fitness impulsada por inteligencia artificial que ofrezca planes de entrenamiento y nutrición personalizados, análisis de alimentos a través de fotos y seguimiento en tiempo real del progreso, inspirada en Fitbro. La aplicación debe ser intuitiva, segura, escalable y replicar las características distintivas de Fitbro, dejando la elección del sistema de almacenamiento de datos al desarrollador.
 
 ---
 

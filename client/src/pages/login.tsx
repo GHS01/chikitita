@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { loginSchema, type LoginData } from "@shared/schema";
 import { Dumbbell } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const { login, isLoading } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
+  const { t } = useTranslation();
 
   const form = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
@@ -27,13 +30,15 @@ export default function Login() {
     try {
       await login(data);
       toast({
-        title: "Welcome back!",
-        description: "You have successfully logged in.",
+        title: t('auth.welcomeBack'),
+        description: t('auth.loginSuccess'),
       });
+      // Redirect to dashboard after successful login
+      setLocation("/dashboard");
     } catch (error) {
       toast({
-        title: "Login failed",
-        description: error instanceof Error ? error.message : "Invalid credentials",
+        title: t('auth.loginFailed'),
+        description: error instanceof Error ? error.message : t('auth.invalidCredentials'),
         variant: "destructive",
       });
     }
@@ -48,20 +53,27 @@ export default function Login() {
               <Dumbbell className="h-8 w-8" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-primary">FitBud AI</CardTitle>
-          <CardDescription>Sign in to your fitness journey</CardDescription>
+          <CardTitle className="text-2xl font-bold text-primary">Fitbro</CardTitle>
+          <CardDescription>{t('auth.signInToJourney')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
+              {/* Hidden field to prevent browser autocomplete */}
+              <input type="text" style={{ display: 'none' }} />
+              <input type="password" style={{ display: 'none' }} />
               <FormField
                 control={form.control}
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>{t('auth.username')}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        autoComplete="off"
+                        placeholder={t('auth.enterUsername')}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -72,24 +84,29 @@ export default function Login() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('auth.password')}</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input
+                        type="password"
+                        {...field}
+                        autoComplete="new-password"
+                        placeholder={t('auth.enterPassword')}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? t('auth.signingIn') : t('auth.signIn')}
               </Button>
             </form>
           </Form>
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
+              {t('auth.dontHaveAccount')}{" "}
               <Link href="/register" className="text-primary hover:underline font-medium">
-                Sign up
+                {t('auth.signUp')}
               </Link>
             </p>
           </div>

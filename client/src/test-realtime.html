@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Real-Time Clock</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .time-display {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .description {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(59, 130, 246, 0.8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🕐 Test Real-Time Clock</h1>
+        <div class="description">
+            Tu plan nutricional optimizado basado en tus objetivos, preferencias y horario en tiempo real
+        </div>
+        <div class="badge">
+            🕐 <span id="realTime">Loading...</span>
+        </div>
+        <div class="time-display" id="timeDisplay">--:-- --</div>
+        <p>⏰ Se actualiza cada minuto automáticamente</p>
+    </div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            
+            // Format 12-hour time with AM/PM
+            const time12h = now.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            
+            // Update displays
+            document.getElementById('realTime').textContent = time12h;
+            document.getElementById('timeDisplay').textContent = time12h;
+            
+            console.log('🕐 Time updated:', time12h);
+        }
+        
+        // Update immediately
+        updateTime();
+        
+        // Update every minute (60000ms)
+        setInterval(updateTime, 60000);
+        
+        // Also update every second for demo purposes
+        setInterval(() => {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            document.getElementById('timeDisplay').textContent = 
+                now.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -11,7 +11,14 @@ export class AuthService {
   private token: string | null = null;
 
   private constructor() {
-    this.token = localStorage.getItem('authToken');
+    // Limpiar tokens antiguos con nombres inconsistentes
+    const oldToken = localStorage.getItem('authToken');
+    if (oldToken) {
+      localStorage.removeItem('authToken');
+      localStorage.setItem('token', oldToken);
+    }
+
+    this.token = localStorage.getItem('token');
   }
 
   static getInstance(): AuthService {
@@ -39,12 +46,12 @@ export class AuthService {
 
   logout(): void {
     this.token = null;
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
   }
 
   setToken(token: string): void {
     this.token = token;
-    localStorage.setItem('authToken', token);
+    localStorage.setItem('token', token);
   }
 
   getToken(): string | null {
