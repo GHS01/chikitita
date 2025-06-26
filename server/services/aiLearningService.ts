@@ -84,7 +84,7 @@ export class AILearningService {
         .from('pre_generated_workouts')
         .select('*')
         .eq('user_id', userId)
-        .eq('is_used', true)
+        .eq('is_consumed', true)
         .order('created_at', { ascending: false })
         .limit(50); // Últimas 50 rutinas
 
