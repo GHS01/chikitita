@@ -343,14 +343,14 @@ export default function ScientificWorkoutModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
-      <Card className="w-full max-w-4xl lg:max-w-6xl max-h-[98vh] sm:max-h-[95vh] overflow-y-auto">
-        <CardHeader className="text-center border-b">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-xl">
-              <Brain className="h-8 w-8" />
+      <Card className="w-full max-w-4xl lg:max-w-6xl max-h-[98vh] sm:max-h-[95vh] overflow-y-auto scrollbar-hide">
+        <CardHeader className="text-center border-b p-4 sm:p-6">
+          <div className="flex items-center justify-center mb-3 sm:mb-4">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 sm:p-4 rounded-xl">
+              <Brain className="h-6 w-6 sm:h-8 sm:w-8" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <CardTitle className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {/* 🚨 TÍTULO CONDICIONAL BASADO EN ESTADO DEL MESOCICLO */}
             {canCreateNew && (
               <>
@@ -371,27 +371,27 @@ export default function ScientificWorkoutModal({
               </>
             )}
           </CardTitle>
-          <CardDescription className="text-lg">
+          <CardDescription className="text-sm sm:text-base lg:text-lg">
             {/* 🚨 DESCRIPCIÓN CONDICIONAL */}
             {canCreateNew && "Configuración inicial de tu mesociclo científico"}
             {mustEdit && "Modifica los días de entrenamiento de tu mesociclo activo"}
             {mesocycleLoading && "Verificando el estado de tu mesociclo..."}
           </CardDescription>
-          
+
           {/* Progress Bar */}
-          <div className="mt-4">
+          <div className="mt-3 sm:mt-4">
             {/* 🚨 PROGRESO CONDICIONAL: 3 pasos para editar, 4 para crear */}
             {mustEdit ? (
               <>
                 <Progress value={(currentStep / 3) * 100} className="w-full" />
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-2">
                   Paso {currentStep} de 3 (Modo Edición)
                 </p>
               </>
             ) : (
               <>
                 <Progress value={(currentStep / 4) * 100} className="w-full" />
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-2">
                   Paso {currentStep} de 4 (Modo Creación)
                 </p>
               </>
@@ -402,9 +402,9 @@ export default function ScientificWorkoutModal({
         <CardContent className="p-3 sm:p-6">
           <Tabs value={`step-${currentStep}`} className="w-full">
             {/* Progreso visual */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                   {/* 🚨 PROGRESO CONDICIONAL */}
                   {mustEdit ? `Paso ${currentStep} de 3` : `Paso ${currentStep} de 4`}
                 </span>
@@ -469,7 +469,7 @@ export default function ScientificWorkoutModal({
                 </p>
               </div>
 
-              <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+              <div className="space-y-4 sm:space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
                 {/* Progreso del mesociclo */}
                 <MesocycleProgress
                   mesocycle={activeMesocycle?.mesocycle || null}
@@ -495,13 +495,13 @@ export default function ScientificWorkoutModal({
 
                 {/* Información del perfil */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Activity className="h-5 w-5 mr-2" />
+                  <CardHeader className="p-3 sm:p-6">
+                    <CardTitle className="flex items-center text-sm sm:text-base">
+                      <Activity className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
                       Tu Perfil de Entrenamiento
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6">
                     <ScientificTooltip
                       title="Frecuencia Semanal Óptima"
                       explanation="Tu frecuencia de entrenamiento determina el tipo de split más efectivo para maximizar resultados."

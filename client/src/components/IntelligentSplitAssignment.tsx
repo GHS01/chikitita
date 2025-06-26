@@ -150,9 +150,11 @@ export default function IntelligentSplitAssignment({
   if (loading) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-2">Generando asignación inteligente...</span>
+        <CardContent className="flex flex-col sm:flex-row items-center justify-center py-6 sm:py-8 p-3 sm:p-6">
+          <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-0 sm:ml-2 mt-2 sm:mt-0 text-xs sm:text-sm text-center">
+            Generando asignación inteligente...
+          </span>
         </CardContent>
       </Card>
     );
@@ -161,10 +163,11 @@ export default function IntelligentSplitAssignment({
   if (!assignment) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-8">
-          <Button onClick={generateIntelligentAssignment}>
-            <Brain className="h-4 w-4 mr-2" />
-            Generar Asignación Inteligente
+        <CardContent className="flex items-center justify-center py-6 sm:py-8 p-3 sm:p-6">
+          <Button onClick={generateIntelligentAssignment} className="text-xs sm:text-sm">
+            <Brain className="h-3 w-3 sm:h-4 sm:w-4 mr-2 flex-shrink-0" />
+            <span className="hidden sm:inline">Generar Asignación Inteligente</span>
+            <span className="sm:hidden">Generar Asignación</span>
           </Button>
         </CardContent>
       </Card>
@@ -175,23 +178,25 @@ export default function IntelligentSplitAssignment({
     <div className="space-y-4">
       {/* Encabezado con lógica científica */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Brain className="h-5 w-5 text-blue-600" />
-            <span>Asignación Inteligente - {weeklyFrequency} Días</span>
-            <Badge variant="secondary">
-              <Zap className="h-3 w-3 mr-1" />
+        <CardHeader className="p-3 sm:p-6">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+            <div className="flex items-center space-x-2">
+              <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
+              <span className="text-sm sm:text-base">Asignación Inteligente - {weeklyFrequency} Días</span>
+            </div>
+            <Badge variant="secondary" className="text-xs w-fit">
+              <Zap className="h-3 w-3 mr-1 flex-shrink-0" />
               Automático
             </Badge>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm">
             {assignment.scientificRationale}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center space-x-4 text-sm text-gray-600">
+        <CardContent className="p-3 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-xs sm:text-sm text-gray-600">
             <div className="flex items-center space-x-1">
-              <Clock className="h-4 w-4" />
+              <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
               <span>{assignment.recoveryPattern}</span>
             </div>
           </div>
@@ -213,52 +218,55 @@ export default function IntelligentSplitAssignment({
       )}
 
       {/* Asignaciones por día */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="space-y-3 sm:space-y-4 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4 lg:space-y-0">
         {assignment.assignments.map((dayAssignment, index) => (
           <Card key={dayAssignment.day} className="relative">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">
+                <CardTitle className="text-sm sm:text-lg">
                   {dayNames[dayAssignment.day as keyof typeof dayNames]}
                 </CardTitle>
                 {dayAssignment.autoAssigned && (
                   <Badge variant="outline" className="text-xs">
-                    <Brain className="h-3 w-3 mr-1" />
+                    <Brain className="h-3 w-3 mr-1 flex-shrink-0" />
                     Auto
                   </Badge>
                 )}
               </div>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6">
               {dayAssignment.splitId > 0 ? (
                 <>
                   <div>
-                    <Badge className={splitTypeColors[dayAssignment.splitType as keyof typeof splitTypeColors]}>
+                    <Badge className={`text-xs ${splitTypeColors[dayAssignment.splitType as keyof typeof splitTypeColors]}`}>
                       {dayAssignment.splitName}
                     </Badge>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <div className="text-sm text-gray-600">
-                      <strong>Músculos:</strong> {dayAssignment.muscleGroups.join(', ')}
+
+                  <div className="space-y-1 sm:space-y-2">
+                    <div className="text-xs sm:text-sm text-gray-600">
+                      <strong>Músculos:</strong>
+                      <span className="block sm:inline sm:ml-1 text-xs">
+                        {dayAssignment.muscleGroups.join(', ')}
+                      </span>
                     </div>
-                    
-                    <div className="flex items-center space-x-1 text-sm text-gray-600">
-                      <Clock className="h-3 w-3" />
+
+                    <div className="flex items-center space-x-1 text-xs sm:text-sm text-gray-600">
+                      <Clock className="h-3 w-3 flex-shrink-0" />
                       <span>Recuperación: {dayAssignment.recoveryHours}h</span>
                     </div>
-                    
-                    <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+
+                    <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded text-left">
                       {dayAssignment.scientificReason}
                     </div>
                   </div>
                 </>
               ) : (
-                <div className="text-center py-4">
-                  <Badge variant="outline" className="bg-gray-50">
+                <div className="text-center py-3 sm:py-4">
+                  <Badge variant="outline" className="bg-gray-50 text-xs">
                     {dayAssignment.splitName}
                   </Badge>
-                  <div className="text-xs text-gray-500 mt-2">
+                  <div className="text-xs text-gray-500 mt-1 sm:mt-2 px-2">
                     {dayAssignment.scientificReason}
                   </div>
                 </div>
@@ -269,43 +277,46 @@ export default function IntelligentSplitAssignment({
       </div>
 
       {/* Botones de acción */}
-      <div className="flex space-x-4">
-        <Button 
+      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+        <Button
           onClick={applyAssignment}
           disabled={applying}
-          className="flex-1"
+          className="flex-1 text-xs sm:text-sm"
         >
           {applying ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Aplicando...
+              <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-white mr-2"></div>
+              <span className="hidden sm:inline">Aplicando...</span>
+              <span className="sm:hidden">Aplicando</span>
             </>
           ) : (
             <>
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Aplicar Asignación Inteligente
+              <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-2 flex-shrink-0" />
+              <span className="hidden sm:inline">Aplicar Asignación Inteligente</span>
+              <span className="sm:hidden">Aplicar Asignación</span>
             </>
           )}
         </Button>
-        
+
         {assignment.canOverride && (
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onManualOverride}
-            className="flex-1"
+            className="flex-1 text-xs sm:text-sm"
           >
-            <Settings className="h-4 w-4 mr-2" />
-            Configurar Manualmente
+            <Settings className="h-3 w-3 sm:h-4 sm:w-4 mr-2 flex-shrink-0" />
+            <span className="hidden sm:inline">Configurar Manualmente</span>
+            <span className="sm:hidden">Configurar</span>
           </Button>
         )}
       </div>
 
       {/* Información adicional */}
       <Card className="bg-blue-50 border-blue-200">
-        <CardContent className="pt-4">
+        <CardContent className="pt-3 sm:pt-4 p-3 sm:p-6">
           <div className="flex items-start space-x-2">
-            <Brain className="h-5 w-5 text-blue-600 mt-0.5" />
-            <div className="text-sm text-blue-800">
+            <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <div className="text-xs sm:text-sm text-blue-800">
               <strong>¿Por qué esta configuración?</strong>
               <p className="mt-1">
                 Esta asignación está basada en principios científicos de recuperación muscular 

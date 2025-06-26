@@ -45,7 +45,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="pt-16">
+      <main className="pt-16 pb-16 md:pb-0">
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/workouts" component={Workouts} />

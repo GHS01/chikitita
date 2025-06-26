@@ -342,50 +342,64 @@ export function NutritionSetupModal({ onClose, onSuccess }: NutritionSetupModalP
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl font-bold">
-            <Utensils className="w-6 h-6 text-green-600" />
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto overflow-x-hidden scrollbar-hide
+        w-[98vw] sm:w-[90vw] md:w-[85vw] lg:w-[80vw] xl:max-w-4xl
+        h-auto
+        fixed
+        left-[50%] top-[50%]
+        translate-x-[-50%] translate-y-[-50%]
+        rounded-2xl sm:rounded-3xl
+        border-2 border-gray-100
+        shadow-2xl
+        bg-white
+        p-2 sm:p-4 md:p-6">
+        <DialogHeader className="pb-4 sm:pb-6 border-b border-gray-100">
+          <DialogTitle className="flex items-center justify-center gap-3 text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
+            <div className="p-2 bg-green-50 rounded-xl">
+              <Utensils className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0" />
+            </div>
             <ModernEmoji emoji="🥗" size={24} luxury={true} />
-            <EmojiText>Configuración Nutricional Personalizada</EmojiText>
+            <EmojiText className="text-center leading-tight">Configuración Nutricional</EmojiText>
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="preferences">Preferencias</TabsTrigger>
-            <TabsTrigger value="restrictions">Restricciones</TabsTrigger>
-            <TabsTrigger value="goals">Objetivos</TabsTrigger>
-            <TabsTrigger value="hydration">Hidratación</TabsTrigger>
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full flex-1 flex flex-col">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1 h-auto p-1 mb-4 sm:mb-6 bg-gray-50 rounded-xl">
+            <TabsTrigger value="preferences" className="text-xs sm:text-sm px-2 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Preferencias</TabsTrigger>
+            <TabsTrigger value="restrictions" className="text-xs sm:text-sm px-2 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Restricciones</TabsTrigger>
+            <TabsTrigger value="goals" className="text-xs sm:text-sm px-2 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Objetivos</TabsTrigger>
+            <TabsTrigger value="hydration" className="text-xs sm:text-sm px-2 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Hidratación</TabsTrigger>
           </TabsList>
 
           {/* Preferences Tab */}
-          <TabsContent value="preferences" className="space-y-6">
+          <TabsContent value="preferences" className="flex-1 space-y-4 sm:space-y-6 scrollbar-hide overflow-y-auto overflow-x-hidden max-h-full">
             {/* Diet Type */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Utensils className="w-5 h-5" />
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white max-w-full">
+              <CardHeader className="pb-4 px-2 sm:px-4 md:px-6">
+                <CardTitle className="flex items-center gap-3 text-base sm:text-lg font-semibold text-gray-800">
+                  <div className="p-2 bg-green-50 rounded-xl">
+                    <Utensils className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0" />
+                  </div>
                   Tipo de Dieta
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+              <CardContent className="pt-0 px-2 sm:px-4 md:px-6 pb-4 sm:pb-6 max-w-full overflow-x-hidden">
+                <div className="grid grid-cols-2 gap-2 mb-4 max-w-full overflow-hidden">
                   {dietTypeOptions.map((option) => (
                     <div
                       key={option.id}
-                      className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                      className={`p-2 border-2 rounded-xl cursor-pointer transition-all duration-300 min-w-0 ${
                         formData.dietType === option.id
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-green-300'
+                          ? 'border-green-500 bg-gradient-to-br from-green-50 to-green-100 shadow-lg'
+                          : 'border-gray-200 hover:border-green-300 hover:shadow-md bg-white'
                       }`}
                       onClick={() => setFormData(prev => ({ ...prev, dietType: option.id }))}
                     >
                       <div className="text-center">
-                        <div className="text-2xl mb-1">
-                          <ModernEmoji emoji={option.emoji} size={24} luxury={true} />
+                        <div className="text-lg mb-1">
+                          <ModernEmoji emoji={option.emoji} size={20} luxury={true} />
                         </div>
-                        <div className="text-sm font-medium">
+                        <div className="text-xs font-semibold text-gray-700 leading-tight truncate">
                           <EmojiText>{option.label}</EmojiText>
                         </div>
                       </div>
@@ -431,30 +445,32 @@ export function NutritionSetupModal({ onClose, onSuccess }: NutritionSetupModalP
             </Card>
 
             {/* Food Habits Rating */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Heart className="w-5 h-5" />
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white max-w-full">
+              <CardHeader className="pb-4 px-2 sm:px-4 md:px-6">
+                <CardTitle className="flex items-center gap-3 text-base sm:text-lg font-semibold text-gray-800">
+                  <div className="p-2 bg-red-50 rounded-xl">
+                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 flex-shrink-0" />
+                  </div>
                   Calidad de Hábitos Alimenticios
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-5 gap-2 mb-4">
+              <CardContent className="pt-0 px-2 sm:px-4 md:px-6 pb-4 sm:pb-6 max-w-full overflow-x-hidden">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4 max-w-full">
                   {foodHabitsRatingOptions.map((option) => (
                     <button
                       key={option.value}
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, foodHabitsRating: option.value }))}
-                      className={`p-3 rounded-lg border-2 transition-all text-center ${
+                      className={`p-2 rounded-xl border-2 transition-all duration-300 text-center min-w-0 ${
                         formData.foodHabitsRating === option.value
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-green-500 bg-gradient-to-br from-green-50 to-green-100 shadow-lg'
+                          : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
                       }`}
                     >
-                      <div className="text-2xl mb-1">
-                        <ModernEmoji emoji={option.emoji} size={24} luxury={true} />
+                      <div className="text-lg mb-1">
+                        <ModernEmoji emoji={option.emoji} size={16} luxury={true} />
                       </div>
-                      <div className={`text-xs font-medium ${option.color}`}>
+                      <div className={`text-xs font-semibold leading-tight truncate ${option.color}`}>
                         <EmojiText>{option.label}</EmojiText>
                       </div>
                     </button>
@@ -464,42 +480,50 @@ export function NutritionSetupModal({ onClose, onSuccess }: NutritionSetupModalP
             </Card>
 
             {/* Food Habits */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Hábitos Alimenticios Actuales</CardTitle>
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white">
+              <CardHeader className="pb-4 px-4 sm:px-6">
+                <CardTitle className="flex items-center gap-3 text-base sm:text-lg font-semibold text-gray-800">
+                  <div className="p-2 bg-blue-50 rounded-xl">
+                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />
+                  </div>
+                  Hábitos Alimenticios Actuales
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-3 mb-4">
+              <CardContent className="pt-0 px-4 sm:px-6 pb-4 sm:pb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                   {foodHabitsOptions.map((option) => (
-                    <div key={option.id} className="flex items-center space-x-2">
+                    <div key={option.id} className="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 border border-gray-100">
                       <Checkbox
                         id={option.id}
                         checked={formData.customFoodHabits.includes(option.id)}
                         onCheckedChange={() => toggleSelection('customFoodHabits', option.id)}
+                        className="flex-shrink-0"
                       />
-                      <Label htmlFor={option.id} className="flex items-center gap-2 cursor-pointer">
+                      <Label htmlFor={option.id} className="flex items-center gap-2 cursor-pointer text-sm font-medium">
                         <ModernEmoji emoji={option.emoji} size={16} luxury={true} />
-                        <EmojiText>{option.label}</EmojiText>
+                        <EmojiText className="leading-tight">{option.label}</EmojiText>
                       </Label>
                     </div>
                   ))}
                 </div>
 
                 {/* Custom food habits */}
-                <div className="space-y-2">
-                  <Label>Hábitos personalizados:</Label>
+                <div className="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                  <Label className="text-sm font-semibold text-gray-700">Hábitos personalizados:</Label>
                   <div className="flex gap-2">
                     <Input
                       placeholder="Agregar hábito alimenticio..."
                       value={customInputs.foodHabits}
                       onChange={(e) => setCustomInputs(prev => ({ ...prev, foodHabits: e.target.value }))}
                       onKeyPress={(e) => e.key === 'Enter' && addCustomTag('foodHabits')}
+                      className="rounded-xl border-gray-200 focus:border-green-500"
                     />
                     <Button
                       type="button"
                       size="sm"
                       onClick={() => addCustomTag('foodHabits')}
                       disabled={!customInputs.foodHabits.trim()}
+                      className="rounded-xl bg-green-600 hover:bg-green-700 shadow-sm"
                     >
                       <Plus className="w-4 h-4" />
                     </Button>
@@ -511,11 +535,11 @@ export function NutritionSetupModal({ onClose, onSuccess }: NutritionSetupModalP
                       return (
                         <div
                           key={filteredIndex}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-100 text-purple-800 text-sm font-medium rounded-lg border border-purple-200 hover:bg-purple-200 transition-colors"
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 text-sm font-medium rounded-xl border border-purple-200 hover:from-purple-200 hover:to-purple-300 transition-all duration-200 shadow-sm"
                         >
                           <span>{capitalizeText(tag)}</span>
                           <X
-                            className="w-4 h-4 cursor-pointer hover:text-purple-900 transition-colors"
+                            className="w-4 h-4 cursor-pointer hover:text-purple-900 transition-colors rounded-full hover:bg-purple-300 p-0.5"
                             onClick={() => removeCustomTag('customFoodHabits', realIndex)}
                           />
                         </div>
@@ -569,25 +593,28 @@ export function NutritionSetupModal({ onClose, onSuccess }: NutritionSetupModalP
           </TabsContent>
 
           {/* Restrictions Tab */}
-          <TabsContent value="restrictions" className="space-y-6">
+          <TabsContent value="restrictions" className="flex-1 space-y-4 sm:space-y-6 scrollbar-hide overflow-y-auto">
             {/* Allergies */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-red-500" />
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white">
+              <CardHeader className="pb-4 px-4 sm:px-6">
+                <CardTitle className="flex items-center gap-3 text-base sm:text-lg font-semibold text-gray-800">
+                  <div className="p-2 bg-red-50 rounded-xl">
+                    <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 flex-shrink-0" />
+                  </div>
                   Alergias Alimentarias
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+              <CardContent className="pt-0 px-4 sm:px-6 pb-4 sm:pb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
                   {allergyOptions.map((option) => (
-                    <div key={option.id} className="flex items-center space-x-2">
+                    <div key={option.id} className="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 border border-gray-100">
                       <Checkbox
                         id={option.id}
                         checked={formData.allergies.includes(option.id)}
                         onCheckedChange={() => toggleSelection('allergies', option.id)}
+                        className="flex-shrink-0"
                       />
-                      <Label htmlFor={option.id} className="flex items-center gap-2 cursor-pointer">
+                      <Label htmlFor={option.id} className="flex items-center gap-2 cursor-pointer text-sm font-medium">
                         <ModernEmoji emoji={option.emoji} size={16} luxury={true} />
                         <EmojiText>{option.label}</EmojiText>
                       </Label>
@@ -696,11 +723,13 @@ export function NutritionSetupModal({ onClose, onSuccess }: NutritionSetupModalP
           </TabsContent>
 
           {/* Goals Tab */}
-          <TabsContent value="goals" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="w-5 h-5 text-green-500" />
+          <TabsContent value="goals" className="flex-1 space-y-4 sm:space-y-6 scrollbar-hide overflow-y-auto">
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white">
+              <CardHeader className="pb-4 px-4 sm:px-6">
+                <CardTitle className="flex items-center gap-3 text-base sm:text-lg font-semibold text-gray-800">
+                  <div className="p-2 bg-green-50 rounded-xl">
+                    <Target className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
+                  </div>
                   Objetivos Calóricos y Nutricionales
                 </CardTitle>
               </CardHeader>
@@ -755,11 +784,13 @@ export function NutritionSetupModal({ onClose, onSuccess }: NutritionSetupModalP
           </TabsContent>
 
           {/* Hydration Tab */}
-          <TabsContent value="hydration" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Droplets className="w-5 h-5 text-blue-500" />
+          <TabsContent value="hydration" className="flex-1 space-y-4 sm:space-y-6 scrollbar-hide overflow-y-auto">
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white">
+              <CardHeader className="pb-4 px-4 sm:px-6">
+                <CardTitle className="flex items-center gap-3 text-base sm:text-lg font-semibold text-gray-800">
+                  <div className="p-2 bg-blue-50 rounded-xl">
+                    <Droplets className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />
+                  </div>
                   Configuración de Hidratación
                 </CardTitle>
               </CardHeader>
@@ -784,24 +815,24 @@ export function NutritionSetupModal({ onClose, onSuccess }: NutritionSetupModalP
           </TabsContent>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-6 border-t">
+          <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100 mt-6">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="flex-1 h-12 text-sm font-semibold rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
             >
-              <X className="w-4 h-4 mr-2" />
-              Cancelar
+              <X className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span className="truncate">Cancelar</span>
             </Button>
             <Button
               type="button"
               onClick={handleSubmit}
               disabled={savePreferences.isPending}
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="flex-1 h-12 text-sm font-semibold rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              <Save className="w-4 h-4 mr-2" />
-              {savePreferences.isPending ? 'Guardando...' : 'Guardar Configuración'}
+              <Save className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span className="truncate">{savePreferences.isPending ? 'Guardando...' : 'Guardar Configuración'}</span>
             </Button>
           </div>
         </Tabs>

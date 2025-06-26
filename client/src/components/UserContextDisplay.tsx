@@ -64,29 +64,29 @@ export default function UserContextDisplay({ className = "", onChangeConsentDeci
   };
 
   return (
-    <div className={`space-y-3 ${className}`}>
+    <div className={`space-y-2 sm:space-y-3 ${className}`}>
       <Separator />
-      
+
       {/* Información básica */}
-      <div className="grid grid-cols-2 gap-3 text-sm">
+      <div className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 text-xs sm:text-sm">
         {/* Ubicación */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Ubicación:</span>
+        <div className="flex items-center justify-between p-2 sm:p-0 bg-gray-50 sm:bg-transparent rounded-lg sm:rounded-none">
+          <div className="flex items-center space-x-1 sm:space-x-2 min-w-0 flex-1">
+            <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-muted-foreground truncate">Ubicación:</span>
           </div>
-          <Badge variant="outline" className="text-xs">
+          <Badge variant="outline" className="text-xs ml-2 flex-shrink-0">
             {locationLabels[preferences.location as keyof typeof locationLabels] || preferences.location}
           </Badge>
         </div>
 
         {/* Horario preferido */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Horario:</span>
+        <div className="flex items-center justify-between p-2 sm:p-0 bg-gray-50 sm:bg-transparent rounded-lg sm:rounded-none">
+          <div className="flex items-center space-x-1 sm:space-x-2 min-w-0 flex-1">
+            <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-muted-foreground truncate">Horario:</span>
           </div>
-          <Badge variant="outline" className="text-xs capitalize">
+          <Badge variant="outline" className="text-xs capitalize ml-2 flex-shrink-0">
             {preferences.preferred_time || 'No especificado'}
           </Badge>
         </div>
@@ -94,10 +94,10 @@ export default function UserContextDisplay({ className = "", onChangeConsentDeci
 
       {/* Tipos de ejercicio preferidos */}
       {preferences.exercise_types && preferences.exercise_types.length > 0 && (
-        <div>
-          <div className="flex items-center space-x-2 mb-2">
-            <Dumbbell className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Tipos de ejercicio:</span>
+        <div className="p-2 sm:p-3 bg-blue-50 sm:bg-transparent rounded-lg sm:rounded-none">
+          <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
+            <Dumbbell className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-xs sm:text-sm text-muted-foreground">Tipos de ejercicio:</span>
           </div>
           <div className="flex flex-wrap gap-1">
             {preferences.exercise_types.map((type: string) => (
@@ -111,10 +111,10 @@ export default function UserContextDisplay({ className = "", onChangeConsentDeci
 
       {/* Equipamiento disponible */}
       {preferences.equipment && preferences.equipment.length > 0 && (
-        <div>
-          <div className="flex items-center space-x-2 mb-2">
-            <Target className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Equipamiento:</span>
+        <div className="p-2 sm:p-3 bg-green-50 sm:bg-transparent rounded-lg sm:rounded-none">
+          <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
+            <Target className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-xs sm:text-sm text-muted-foreground">Equipamiento:</span>
           </div>
           <div className="flex flex-wrap gap-1">
             {preferences.equipment.map((equip: string) => (
@@ -128,10 +128,10 @@ export default function UserContextDisplay({ className = "", onChangeConsentDeci
 
       {/* Limitaciones físicas - CRÍTICO PARA SEGURIDAD */}
       {preferences.limitations && preferences.limitations.length > 0 && (
-        <div>
-          <div className="flex items-center space-x-2 mb-2">
-            <AlertTriangle className="h-4 w-4 text-red-500" />
-            <span className="text-sm text-red-600 font-medium">Limitaciones físicas:</span>
+        <div className="p-2 sm:p-3 bg-red-50 sm:bg-transparent rounded-lg sm:rounded-none border sm:border-0 border-red-200">
+          <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
+            <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 text-red-500 flex-shrink-0" />
+            <span className="text-xs sm:text-sm text-red-600 font-medium">Limitaciones físicas:</span>
           </div>
           <div className="flex flex-wrap gap-1">
             {preferences.limitations.map((limitation: string) => (
@@ -151,16 +151,16 @@ export default function UserContextDisplay({ className = "", onChangeConsentDeci
 
       {/* Información del usuario */}
       {user && (
-        <div className="grid grid-cols-2 gap-3 text-sm pt-2 border-t">
-          <div className="flex items-center justify-between">
+        <div className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 text-xs sm:text-sm pt-2 border-t">
+          <div className="flex items-center justify-between p-2 sm:p-0 bg-purple-50 sm:bg-transparent rounded-lg sm:rounded-none">
             <span className="text-muted-foreground">Nivel:</span>
-            <Badge variant="outline" className="text-xs capitalize">
+            <Badge variant="outline" className="text-xs capitalize ml-2 flex-shrink-0">
               {user.fitnessLevel || 'No especificado'}
             </Badge>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between p-2 sm:p-0 bg-purple-50 sm:bg-transparent rounded-lg sm:rounded-none">
             <span className="text-muted-foreground">Objetivo:</span>
-            <Badge variant="outline" className="text-xs capitalize">
+            <Badge variant="outline" className="text-xs capitalize ml-2 flex-shrink-0">
               {user.fitnessGoal?.replace('_', ' ') || 'No especificado'}
             </Badge>
           </div>

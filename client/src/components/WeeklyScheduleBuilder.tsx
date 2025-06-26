@@ -9,6 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Calendar,
   Dumbbell,
   CheckCircle,
@@ -17,7 +24,8 @@ import {
   Zap,
   Target,
   Info,
-  Brain
+  Brain,
+  ChevronDown
 } from 'lucide-react';
 import { ModernEmoji } from '@/components/ui/modern-emoji';
 import { useFilteredSplits } from '@/hooks/useFilteredSplits';
@@ -342,16 +350,16 @@ export default function WeeklyScheduleBuilder({
       </div>
 
       {/* Calendario Semanal - Solo días disponibles */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-2 sm:px-0">
         {daysToShow.map((day) => {
           const assignedSplit = schedule[day.key as keyof WeeklySchedule];
-          
+
           return (
-            <Card 
-              key={day.key} 
+            <Card
+              key={day.key}
               className={`${day.color} transition-all duration-200 hover:shadow-md ${
                 assignedSplit ? 'ring-2 ring-primary' : ''
-              }`}
+              } overflow-hidden`}
             >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center justify-between">
@@ -389,41 +397,75 @@ export default function WeeklyScheduleBuilder({
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-xs text-muted-foreground">Sin asignar</p>
-                    <select
-                      className="w-full text-xs p-1 border rounded"
-                      onChange={(e) => {
-                        const splitId = parseInt(e.target.value);
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+                      <p className="text-xs text-muted-foreground">Sin asignar</p>
+                    </div>
+                    <Select
+                      onValueChange={(value) => {
+                        const splitId = parseInt(value);
                         const split = availableSplits.find(s => s.id === splitId);
                         if (split) assignSplitToDay(day.key as keyof WeeklySchedule, split);
                       }}
-                      value=""
                     >
-                      <option value="">Seleccionar split...</option>
-                      {availableSplits
-                        .filter(split => {
-                          // 🔄 PARA 5+ DÍAS: Mostrar todos los splits (permitir repetición)
-                          if (weeklyFrequency >= 5) {
-                            return true;
-                          }
-                          // 🚨 PARA <5 DÍAS: Solo mostrar splits no seleccionados
-                          return !selectedSplits.has(split.id);
-                        })
-                        .map(split => {
-                          // 🔢 Contar cuántas veces está usado este split
-                          const usageCount = Object.values(schedule).filter(s => s?.id === split.id).length;
-                          const displayName = weeklyFrequency >= 5 && usageCount > 0
-                            ? `${split.split_name} (${usageCount + 1}ª vez)`
-                            : split.split_name;
+                      <SelectTrigger className="w-full h-9 sm:h-8 text-xs bg-white border-gray-200 hover:border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all duration-200 shadow-sm">
+                        <SelectValue placeholder="Seleccionar split..." className="text-xs text-gray-600 truncate" />
+                        <ChevronDown className="h-3 w-3 text-gray-400 ml-auto flex-shrink-0" />
+                      </SelectTrigger>
+                      <SelectContent
+                        className="max-w-[calc(100vw-2rem)] sm:max-w-[280px] bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden z-50"
+                        position="popper"
+                        sideOffset={4}
+                        align="start"
+                        avoidCollisions={true}
+                        collisionPadding={8}
+                      >
+                        {availableSplits
+                          .filter(split => {
+                            // 🔄 PARA 5+ DÍAS: Mostrar todos los splits (permitir repetición)
+                            if (weeklyFrequency >= 5) {
+                              return true;
+                            }
+                            // 🚨 PARA <5 DÍAS: Solo mostrar splits no seleccionados
+                            return !selectedSplits.has(split.id);
+                          })
+                          .map(split => {
+                            // 🔢 Contar cuántas veces está usado este split
+                            const usageCount = Object.values(schedule).filter(s => s?.id === split.id).length;
+                            const displayName = weeklyFrequency >= 5 && usageCount > 0
+                              ? `${split.split_name} (${usageCount + 1}ª vez)`
+                              : split.split_name;
 
-                          return (
-                            <option key={`${split.id}-${usageCount}`} value={split.id}>
-                              {displayName}
-                            </option>
-                          );
-                        })
-                      }
-                    </select>
+                            return (
+                              <SelectItem
+                                key={`${split.id}-${usageCount}`}
+                                value={split.id.toString()}
+                                className="text-xs py-3 px-3 hover:bg-gray-50 focus:bg-primary/5 cursor-pointer transition-colors duration-150 border-b border-gray-100 last:border-b-0"
+                              >
+                                <div className="flex items-start justify-between w-full gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <Dumbbell className="h-3 w-3 text-primary flex-shrink-0" />
+                                      <span className="font-medium text-gray-900 truncate">
+                                        {displayName}
+                                      </span>
+                                    </div>
+                                    <div className="text-xs text-gray-500 mt-1 truncate">
+                                      {split.split_type.replace(/_/g, ' ').toUpperCase()}
+                                    </div>
+                                  </div>
+                                  {usageCount > 0 && weeklyFrequency >= 5 && (
+                                    <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-5 flex-shrink-0">
+                                      {usageCount + 1}x
+                                    </Badge>
+                                  )}
+                                </div>
+                              </SelectItem>
+                            );
+                          })
+                        }
+                      </SelectContent>
+                    </Select>
                   </div>
                 )}
               </CardContent>

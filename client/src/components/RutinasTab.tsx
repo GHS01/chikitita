@@ -270,7 +270,7 @@ const RutinasTab: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="mobile-container space-y-4 sm:space-y-6">
       {/* 🤖 Rutina Automática de Hoy */}
       <Card className="border-2 border-primary/20 bg-gradient-to-r from-blue-50 to-purple-50">
         <CardHeader>
@@ -381,11 +381,11 @@ const RutinasTab: React.FC = () => {
 
       {/* Week Navigation */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
             <div className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5 text-primary" />
-              <CardTitle>
+              <Calendar className="h-5 w-5 text-primary flex-shrink-0" />
+              <CardTitle className="text-base sm:text-lg truncate">
                 Semana del {formatWeekRange(currentWeek.weekStartDate)}
               </CardTitle>
             </div>
@@ -395,30 +395,35 @@ const RutinasTab: React.FC = () => {
                 size="sm"
                 onClick={fetchWeeklyData}
                 disabled={loading}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm"
               >
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                <span>Actualizar</span>
+                <RefreshCw className={`h-3 w-3 sm:h-4 sm:w-4 ${loading ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Actualizar</span>
+                <span className="sm:hidden">↻</span>
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedWeekIndex(Math.min(selectedWeekIndex + 1, weekData.length - 1))}
-                disabled={selectedWeekIndex >= weekData.length - 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                {selectedWeekIndex === 0 ? 'Actual' : `Hace ${selectedWeekIndex} semana${selectedWeekIndex > 1 ? 's' : ''}`}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedWeekIndex(Math.max(selectedWeekIndex - 1, 0))}
-                disabled={selectedWeekIndex <= 0}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedWeekIndex(Math.min(selectedWeekIndex + 1, weekData.length - 1))}
+                  disabled={selectedWeekIndex >= weekData.length - 1}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+                </Button>
+                <span className="text-xs sm:text-sm text-muted-foreground px-1 sm:px-2 text-center min-w-[60px] sm:min-w-[80px]">
+                  {selectedWeekIndex === 0 ? 'Actual' : `Hace ${selectedWeekIndex} sem${selectedWeekIndex > 1 ? 's' : ''}`}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedWeekIndex(Math.max(selectedWeekIndex - 1, 0))}
+                  disabled={selectedWeekIndex <= 0}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -432,23 +437,23 @@ const RutinasTab: React.FC = () => {
             <span>Resumen Semanal</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-primary/5 rounded-lg">
-              <div className="text-2xl font-bold text-primary">{currentWeek.summary.totalWorkouts}</div>
-              <div className="text-sm text-muted-foreground">Entrenamientos</div>
+        <CardContent className="p-3 sm:p-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+            <div className="text-center p-2 sm:p-4 bg-primary/5 rounded-lg">
+              <div className="text-lg sm:text-2xl font-bold text-primary">{currentWeek.summary.totalWorkouts}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Entrenamientos</div>
             </div>
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">{Math.round(currentWeek.summary.totalDurationMinutes / 60 * 10) / 10}h</div>
-              <div className="text-sm text-muted-foreground">Tiempo Total</div>
+            <div className="text-center p-2 sm:p-4 bg-blue-50 rounded-lg">
+              <div className="text-lg sm:text-2xl font-bold text-blue-600">{Math.round(currentWeek.summary.totalDurationMinutes / 60 * 10) / 10}h</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Tiempo Total</div>
             </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">{currentWeek.summary.uniqueExercises.length}</div>
-              <div className="text-sm text-muted-foreground">Ejercicios Únicos</div>
+            <div className="text-center p-2 sm:p-4 bg-green-50 rounded-lg">
+              <div className="text-lg sm:text-2xl font-bold text-green-600">{currentWeek.summary.uniqueExercises.length}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Ejercicios Únicos</div>
             </div>
-            <div className="text-center p-4 bg-orange-50 rounded-lg">
-              <div className="text-2xl font-bold text-orange-600">{currentWeek.summary.workoutDays.length}</div>
-              <div className="text-sm text-muted-foreground">Días Activos</div>
+            <div className="text-center p-2 sm:p-4 bg-orange-50 rounded-lg">
+              <div className="text-lg sm:text-2xl font-bold text-orange-600">{currentWeek.summary.workoutDays.length}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Días Activos</div>
             </div>
           </div>
         </CardContent>
@@ -463,10 +468,10 @@ const RutinasTab: React.FC = () => {
               <span>Tipos de Ejercicio</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
+          <CardContent className="p-3 sm:p-6">
+            <div className="flex flex-wrap gap-1 sm:gap-2">
               {currentWeek.summary.exerciseTypes.map((type, index) => (
-                <Badge key={index} variant="secondary">
+                <Badge key={index} variant="secondary" className="text-xs sm:text-sm">
                   {type}
                 </Badge>
               ))}
@@ -483,31 +488,31 @@ const RutinasTab: React.FC = () => {
             <span>Historial de Entrenamientos</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 sm:p-6">
           {currentWeek.history.length === 0 ? (
-            <div className="text-center py-8">
-              <ModernEmoji emoji="💪" size={48} />
-              <p className="text-muted-foreground mt-4">No hay entrenamientos registrados esta semana</p>
+            <div className="text-center py-6 sm:py-8">
+              <ModernEmoji emoji="💪" size={32} className="sm:size-48" />
+              <p className="text-muted-foreground mt-3 sm:mt-4 text-sm sm:text-base">No hay entrenamientos registrados esta semana</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {currentWeek.history.map((workout) => (
-                <div key={workout.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-center">
-                      <div className="text-sm font-medium">{getDayName(workout.workoutDate)}</div>
+                <div key={workout.id} className="flex items-center justify-between p-2 sm:p-3 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+                    <div className="text-center flex-shrink-0">
+                      <div className="text-xs sm:text-sm font-medium">{getDayName(workout.workoutDate)}</div>
                       <div className="text-xs text-muted-foreground">{formatDate(workout.workoutDate)}</div>
                     </div>
-                    <div>
-                      <h4 className="font-medium">{workout.exerciseName}</h4>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-medium text-sm sm:text-base truncate">{workout.exerciseName}</h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {workout.durationMinutes} min
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
                     {workout.exerciseType && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs hidden sm:inline-flex">
                         {workout.exerciseType}
                       </Badge>
                     )}

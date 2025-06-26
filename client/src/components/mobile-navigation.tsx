@@ -23,21 +23,21 @@ export default function MobileNavigation() {
   const shouldHideFooter = isAITrainerPage;
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 bg-card border-t border-border md:hidden z-30 mobile-safe-area transition-transform duration-300 ${
-      shouldHideFooter ? 'translate-y-full' : 'translate-y-0'
+    <div className={`mobile-footer-sticky md:hidden transition-transform duration-300 ${
+      shouldHideFooter ? 'mobile-footer-hidden' : 'translate-y-0'
     }`}>
-      <div className="flex justify-around items-center py-2">
+      <div className="flex justify-around items-center py-2 px-2">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
 
           return (
             <Link key={item.path} href={item.href}>
-              <div className={`flex flex-col items-center py-2 px-3 transition-colors ${
+              <div className={`flex flex-col items-center py-2 px-2 sm:px-3 transition-colors min-w-0 flex-1 ${
                 active ? "text-primary" : "text-muted-foreground"
               }`}>
-                <Icon className="h-5 w-5" />
-                <span className="text-xs mt-1 font-medium">{item.label}</span>
+                <Icon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                <span className="text-xs mt-1 font-medium truncate w-full text-center">{item.label}</span>
               </div>
             </Link>
           );

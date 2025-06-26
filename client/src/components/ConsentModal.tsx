@@ -56,37 +56,37 @@ export default function ConsentModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-            <AlertTriangle className="w-8 h-8 text-orange-600" />
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <Card className="w-full max-w-sm sm:max-w-lg lg:max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto scrollbar-hide">
+        <CardHeader className="text-center p-4 sm:p-6">
+          <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-orange-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+            <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
+          <CardTitle className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
             🏥 Consentimiento Informado
           </CardTitle>
-          <CardDescription className="text-lg">
+          <CardDescription className="text-sm sm:text-base lg:text-lg">
             Hemos detectado limitaciones físicas en tu perfil
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
           {/* Limitaciones detectadas */}
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-            <h3 className="font-semibold text-orange-800 mb-3 flex items-center">
-              <AlertTriangle className="w-5 h-5 mr-2" />
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 sm:p-4">
+            <h3 className="font-semibold text-orange-800 mb-2 sm:mb-3 flex items-center text-sm sm:text-base">
+              <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
               Limitaciones Detectadas
             </h3>
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4">
               {limitations.map((limitation) => (
-                <Badge key={limitation} variant="outline" className="bg-orange-100 text-orange-800 border-orange-300">
+                <Badge key={limitation} variant="outline" className="bg-orange-100 text-orange-800 border-orange-300 text-xs sm:text-sm">
                   {limitationLabels[limitation] || limitation}
                 </Badge>
               ))}
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1 sm:space-y-2">
               {limitations.map((limitation) => (
-                <div key={limitation} className="text-sm text-orange-700">
+                <div key={limitation} className="text-xs sm:text-sm text-orange-700">
                   • {riskExplanations[limitation] || 'Puede requerir precauciones especiales'}
                 </div>
               ))}
@@ -94,24 +94,24 @@ export default function ConsentModal({
           </div>
 
           {/* Opciones de consentimiento */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-gray-900 text-lg">
+          <div className="space-y-3 sm:space-y-4">
+            <h3 className="font-semibold text-gray-900 text-base sm:text-lg">
               ¿Cómo prefieres proceder?
             </h3>
 
             {/* Opción 1: Acepto riesgos */}
             <Card className="border-2 hover:border-red-300 transition-colors cursor-pointer"
                   onClick={() => handleDecision('accept_risks')}>
-              <CardContent className="p-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <CheckCircle className="w-5 h-5 text-red-600" />
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-start space-x-2 sm:space-x-3">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-red-800 mb-2">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-red-800 mb-1 sm:mb-2 text-sm sm:text-base">
                       ✅ ACEPTO RIESGOS - Mostrar todos los splits
                     </h4>
-                    <p className="text-sm text-gray-600 mb-2">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">
                       Entiendo los riesgos y acepto la responsabilidad. Quiero ver todos los splits disponibles.
                     </p>
                     <div className="text-xs text-red-600 bg-red-50 p-2 rounded">
@@ -170,10 +170,10 @@ export default function ConsentModal({
           </div>
 
           {/* Disclaimer legal */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-xs text-gray-600">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4 text-xs sm:text-sm text-gray-600">
             <p className="mb-2">
-              <strong>Aviso Legal:</strong> Esta aplicación no sustituye el consejo médico profesional. 
-              Siempre consulta con un profesional de la salud antes de comenzar cualquier programa de ejercicios, 
+              <strong>Aviso Legal:</strong> Esta aplicación no sustituye el consejo médico profesional.
+              Siempre consulta con un profesional de la salud antes de comenzar cualquier programa de ejercicios,
               especialmente si tienes condiciones médicas preexistentes.
             </p>
             <p>
@@ -182,8 +182,8 @@ export default function ConsentModal({
           </div>
 
           {/* Botón de cerrar */}
-          <div className="flex justify-center pt-4">
-            <Button variant="outline" onClick={onClose} className="px-8">
+          <div className="flex justify-center pt-3 sm:pt-4">
+            <Button variant="outline" onClick={onClose} className="px-6 sm:px-8 text-sm">
               <XCircle className="w-4 h-4 mr-2" />
               Cerrar
             </Button>

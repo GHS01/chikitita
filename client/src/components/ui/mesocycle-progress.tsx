@@ -199,22 +199,21 @@ export function MesocycleProgress({
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="space-y-4">
-
+      <CardContent className="space-y-3 sm:space-y-4 p-3 sm:p-6">
 
         {/* Información del mesociclo */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Nombre:</span>
-            <span className="text-sm text-muted-foreground">{mesocycle.mesocycle_name}</span>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-1 sm:space-y-0">
+            <span className="text-xs sm:text-sm font-medium">Nombre:</span>
+            <span className="text-xs sm:text-sm text-muted-foreground truncate">{mesocycle.mesocycle_name}</span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Duración:</span>
-            <span className="text-sm text-muted-foreground">{mesocycle.duration_weeks} semanas</span>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-1 sm:space-y-0">
+            <span className="text-xs sm:text-sm font-medium">Duración:</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">{mesocycle.duration_weeks} semanas</span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Período:</span>
-            <span className="text-sm text-muted-foreground">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-1 sm:space-y-0">
+            <span className="text-xs sm:text-sm font-medium">Período:</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">
               {new Date(mesocycle.start_date).toLocaleDateString()} - {new Date(mesocycle.end_date).toLocaleDateString()}
             </span>
           </div>
@@ -222,25 +221,25 @@ export function MesocycleProgress({
 
         {/* Progreso visual */}
         {progress && (
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
+          <div className="space-y-2 sm:space-y-3">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-1 sm:space-y-0">
               <MesocycleTooltip
                 currentWeek={progress.currentWeek}
                 totalWeeks={progress.totalWeeks}
                 progressPercentage={progress.progressPercentage} // 🚨 PASAR EL PROGRESO REAL
               >
-                <span className="text-sm font-medium">Progreso</span>
+                <span className="text-xs sm:text-sm font-medium">Progreso</span>
               </MesocycleTooltip>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-xs sm:text-sm text-muted-foreground">
                 Semana {progress.currentWeek} de {progress.totalWeeks}
               </span>
             </div>
 
             <Progress
               value={progress.progressPercentage}
-              className={`h-3 ${isCompleted ? 'bg-green-100' : isNearEnd ? 'bg-orange-100' : ''}`}
+              className={`h-2 sm:h-3 ${isCompleted ? 'bg-green-100' : isNearEnd ? 'bg-orange-100' : ''}`}
             />
-            
+
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>{progress.elapsedDays} días transcurridos</span>
               <span>{progress.remainingDays} días restantes</span>
