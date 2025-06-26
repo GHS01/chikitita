@@ -1159,7 +1159,7 @@ async function getExerciseFeedbackHistory(userId: number) {
         workout_sessions!inner(user_id, started_at, status)
       `)
       .eq('workout_sessions.user_id', userId)
-      .order('workout_sessions.started_at', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(50);
 
     if (error) {
@@ -1310,7 +1310,7 @@ async function getExerciseLogs(userId: number) {
         workout_sessions!inner(user_id, started_at, status)
       `)
       .eq('workout_sessions.user_id', userId)
-      .order('workout_sessions.started_at', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(100);
 
     if (error) {
@@ -1352,11 +1352,12 @@ async function getMuscleGroupProgress(userId: number) {
         exercise_name,
         weight_used,
         reps_completed,
+        created_at,
         workout_sessions!inner(user_id, started_at)
       `)
       .eq('workout_sessions.user_id', userId)
       .gte('workout_sessions.started_at', new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString())
-      .order('workout_sessions.started_at', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching muscle group progress:', error);
