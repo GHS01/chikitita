@@ -132,24 +132,23 @@ export default function Nutrition() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">{t('nutrition.title')}</h1>
-          <p className="text-muted-foreground">{t('nutrition.subtitle')}</p>
+    <div className="mobile-container py-4 sm:py-8">
+      {/* Header - MOBILE OPTIMIZED */}
+      <div className="mobile-header">
+        <div className="w-full sm:w-auto">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">{t('nutrition.title')}</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">{t('nutrition.subtitle')}</p>
         </div>
-        <div className="flex gap-2 sm:gap-3 mt-4 md:mt-0">
+        <div className="mobile-button-group w-full sm:w-auto mt-3 sm:mt-0">
           {/* Nutrition Setup Button */}
           <Button
             onClick={() => setShowNutritionSetup(true)}
             variant="outline"
-            className="border-green-200 hover:bg-green-50 text-sm px-3 sm:px-4"
+            className="mobile-button border-green-200 hover:bg-green-50 flex-1 sm:flex-none"
             size="sm"
           >
-            <Settings className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">{nutritionPreferences?.dietType ? 'Configuración' : 'Configuración'}</span>
-            <span className="sm:hidden">Configuración</span>
+            <Settings className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="text-xs sm:text-sm">Config</span>
           </Button>
 
           {/* Generate Meal Plan Button */}
@@ -157,31 +156,31 @@ export default function Nutrition() {
             <Button
               onClick={() => generateMealPlanMutation.mutate()}
               disabled={generateMealPlanMutation.isPending}
-              className="bg-green-600 hover:bg-green-700 text-sm px-3 sm:px-4"
+              className="mobile-button bg-green-600 hover:bg-green-700 flex-1 sm:flex-none"
               size="sm"
             >
-              <Target className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">{generateMealPlanMutation.isPending ? 'Generando...' : 'Generar Plan Alimenticio'}</span>
-              <span className="sm:hidden">{generateMealPlanMutation.isPending ? 'Generando...' : 'Generar Plan'}</span>
+              <Target className="h-4 w-4 mr-1 sm:mr-2" />
+              <span className="text-xs sm:text-sm">
+                {generateMealPlanMutation.isPending ? 'Generando...' : 'Plan'}
+              </span>
             </Button>
           )}
 
           {/* Add Meal Button */}
           <Button
             onClick={() => setShowPhotoUpload(true)}
-            className="bg-secondary hover:bg-secondary/90 text-sm px-3 sm:px-4"
+            className="mobile-button bg-secondary hover:bg-secondary/90 flex-1 sm:flex-none"
             size="sm"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Agregar Comida</span>
-            <span className="sm:hidden">Agregar Comida</span>
+            <Plus className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="text-xs sm:text-sm">Agregar</span>
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="mobile-grid">
         {/* Today's Meals */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="mobile-grid-main">
           {/* Generated Meal Plan */}
           {mealPlan && showMealPlan && (
             <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50/30 shadow-lg">
@@ -348,9 +347,9 @@ export default function Nutrition() {
                   <UtensilsCrossed className="h-5 w-5" />
                 </div>
                 <CardTitle className="text-xl font-bold text-slate-800">{t('nutrition.todaysMeals')}</CardTitle>
-                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
+                <Badge className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-0 px-3 py-1 text-sm font-semibold shadow-md hover:from-blue-600 hover:to-indigo-700 transition-all duration-200">
                   {todaysMeals?.length || 0} comidas
-                </div>
+                </Badge>
               </div>
               <CardDescription className="text-slate-600 font-medium">
                 {new Date().toLocaleDateString('en-US', {
@@ -464,7 +463,7 @@ export default function Nutrition() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="mobile-grid-sidebar">
           {/* Daily Macros */}
           <Card className="bg-gradient-to-br from-white to-purple-50 border border-purple-200 shadow-lg">
             <CardHeader className="pb-4">

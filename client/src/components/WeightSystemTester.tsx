@@ -204,12 +204,14 @@ const WeightSystemTester: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TestTube className="h-5 w-5 text-blue-600" />
-          Sistema de Testing - Peso Inteligente
-          <Badge variant="outline" className="ml-auto">
+    <Card className="w-full mx-auto">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <div className="flex items-center gap-2">
+            <TestTube className="h-5 w-5 text-blue-600 flex-shrink-0" />
+            <span className="text-base sm:text-lg">Sistema de Testing - Peso Inteligente</span>
+          </div>
+          <Badge variant="outline" className="self-start sm:ml-auto">
             Desarrollo
           </Badge>
         </CardTitle>
@@ -230,26 +232,29 @@ const WeightSystemTester: React.FC = () => {
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-6">
-        {/* Controles */}
-        <div className="flex gap-3">
-          <Button 
-            onClick={runAllTests} 
+      <CardContent className="space-y-4 sm:space-y-6">
+        {/* Controles - MOBILE OPTIMIZED */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <Button
+            onClick={runAllTests}
             disabled={isRunning}
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto text-sm sm:text-base px-3 sm:px-4 py-2"
           >
             {isRunning ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin flex-shrink-0" />
             ) : (
-              <Play className="h-4 w-4" />
+              <Play className="h-4 w-4 flex-shrink-0" />
             )}
-            {isRunning ? 'Ejecutando Tests...' : 'Ejecutar Todos los Tests'}
+            <span className="truncate">
+              {isRunning ? 'Ejecutando Tests...' : 'Ejecutar Todos los Tests'}
+            </span>
           </Button>
-          
-          <Button 
-            variant="outline" 
+
+          <Button
+            variant="outline"
             onClick={resetTests}
             disabled={isRunning}
+            className="w-full sm:w-auto text-sm sm:text-base px-3 sm:px-4 py-2"
           >
             Limpiar Resultados
           </Button>
@@ -266,29 +271,29 @@ const WeightSystemTester: React.FC = () => {
           </div>
         )}
 
-        {/* Resumen de Resultados */}
+        {/* Resumen de Resultados - MOBILE OPTIMIZED */}
         {results.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <Card className="border-blue-200">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-blue-600">{results.length}</div>
-                <div className="text-sm text-muted-foreground">Tests Ejecutados</div>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-xl sm:text-2xl font-bold text-blue-600">{results.length}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Tests Ejecutados</div>
               </CardContent>
             </Card>
-            
+
             <Card className="border-green-200">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-green-600">
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-xl sm:text-2xl font-bold text-green-600">
                   {results.filter(r => r.passed).length}
                 </div>
-                <div className="text-sm text-muted-foreground">Tests Exitosos</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Tests Exitosos</div>
               </CardContent>
             </Card>
-            
+
             <Card className="border-orange-200">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-orange-600">{getSuccessRate()}%</div>
-                <div className="text-sm text-muted-foreground">Tasa de Éxito</div>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-xl sm:text-2xl font-bold text-orange-600">{getSuccessRate()}%</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Tasa de Éxito</div>
               </CardContent>
             </Card>
           </div>

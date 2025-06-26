@@ -73,12 +73,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-1/3 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="h-6 sm:h-8 bg-muted rounded w-2/3 sm:w-1/3 mb-4 sm:mb-6"></div>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-muted rounded-xl"></div>
+              <div key={i} className="h-24 sm:h-28 lg:h-32 bg-muted rounded-xl"></div>
             ))}
           </div>
         </div>
@@ -98,63 +98,74 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <ModernEmoji emoji="📊" size={32} />
-            Dashboard Analytics
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header - MOBILE OPTIMIZED */}
+      <div className="mobile-header">
+        <div className="w-full sm:w-auto">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold flex items-center gap-2">
+            <ModernEmoji emoji="📊" size={24} className="sm:hidden" />
+            <ModernEmoji emoji="📊" size={32} className="hidden sm:inline" />
+            <span className="truncate">Dashboard Analytics</span>
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm sm:text-base mt-1">
             Análisis inteligente de tu progreso fitness
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <Button
-              variant={selectedPeriod === 7 ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedPeriod(7)}
-            >
-              7 días
-            </Button>
-            <Button
-              variant={selectedPeriod === 30 ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedPeriod(30)}
-            >
-              30 días
-            </Button>
-            <Button
-              variant={selectedPeriod === 90 ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedPeriod(90)}
-            >
-              90 días
-            </Button>
+        <div className="w-full sm:w-auto">
+          <div className="mobile-button-group">
+            <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-0">
+              <Button
+                variant={selectedPeriod === 7 ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedPeriod(7)}
+                className="mobile-button-responsive flex-1 sm:flex-none"
+              >
+                7d
+              </Button>
+              <Button
+                variant={selectedPeriod === 30 ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedPeriod(30)}
+                className="mobile-button-responsive flex-1 sm:flex-none"
+              >
+                30d
+              </Button>
+              <Button
+                variant={selectedPeriod === 90 ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedPeriod(90)}
+                className="mobile-button-responsive flex-1 sm:flex-none"
+              >
+                90d
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetch()}
+                className="mobile-button-responsive flex-none"
+              >
+                <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />
+              </Button>
+            </div>
           </div>
-          <Button variant="outline" size="sm" onClick={() => refetch()}>
-            <RefreshCw className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Quick Stats - MOBILE OPTIMIZED */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {/* Entrenamientos Semanales */}
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <CardContent className="p-6">
+          <CardContent className="mobile-card-content">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-blue-600">Entrenamientos</p>
-                <p className="text-3xl font-bold text-blue-800">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-blue-600 truncate">Entrenamientos</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-800">
                   {summary?.weeklyWorkouts || 0}
                 </p>
-                <p className="text-xs text-blue-600">Esta semana</p>
+                <p className="text-xs text-blue-600 truncate">Esta semana</p>
               </div>
-              <div className="bg-blue-600 text-white p-3 rounded-xl">
-                <Calendar className="h-6 w-6" />
+              <div className="bg-blue-600 text-white p-2 sm:p-3 rounded-lg sm:rounded-xl flex-shrink-0">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
               </div>
             </div>
           </CardContent>
@@ -162,17 +173,17 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
 
         {/* Adherencia */}
         <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <CardContent className="p-6">
+          <CardContent className="mobile-card-content">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-green-600">Adherencia</p>
-                <p className="text-3xl font-bold text-green-800">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-green-600 truncate">Adherencia</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-800">
                   {summary?.completionRate || 0}%
                 </p>
-                <p className="text-xs text-green-600">Tasa de completación</p>
+                <p className="text-xs text-green-600 truncate">Tasa de completación</p>
               </div>
-              <div className="bg-green-600 text-white p-3 rounded-xl">
-                <Target className="h-6 w-6" />
+              <div className="bg-green-600 text-white p-2 sm:p-3 rounded-lg sm:rounded-xl flex-shrink-0">
+                <Target className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
               </div>
             </div>
           </CardContent>
@@ -180,17 +191,17 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
 
         {/* RPE Promedio */}
         <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-          <CardContent className="p-6">
+          <CardContent className="mobile-card-content">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-orange-600">RPE Promedio</p>
-                <p className="text-3xl font-bold text-orange-800">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-orange-600 truncate">RPE Promedio</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-800">
                   {summary?.averageRpe || 0}
                 </p>
-                <p className="text-xs text-orange-600">Esfuerzo percibido</p>
+                <p className="text-xs text-orange-600 truncate">Esfuerzo percibido</p>
               </div>
-              <div className="bg-orange-600 text-white p-3 rounded-xl">
-                <Zap className="h-6 w-6" />
+              <div className="bg-orange-600 text-white p-2 sm:p-3 rounded-lg sm:rounded-xl flex-shrink-0">
+                <Zap className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
               </div>
             </div>
           </CardContent>
@@ -198,49 +209,55 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
 
         {/* Volumen Total */}
         <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <CardContent className="p-6">
+          <CardContent className="mobile-card-content">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-purple-600">Volumen Total</p>
-                <p className="text-3xl font-bold text-purple-800">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-purple-600 truncate">Volumen Total</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-800">
                   {Math.round(summary?.totalVolume || 0)}kg
                 </p>
-                <p className="text-xs text-purple-600">Peso levantado</p>
+                <p className="text-xs text-purple-600 truncate">Peso levantado</p>
               </div>
-              <div className="bg-purple-600 text-white p-3 rounded-xl">
-                <BarChart3 className="h-6 w-6" />
+              <div className="bg-purple-600 text-white p-2 sm:p-3 rounded-lg sm:rounded-xl flex-shrink-0">
+                <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Tabs de Analytics */}
-      <Tabs defaultValue="progress" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="progress" className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Progreso
+      {/* Tabs de Analytics - MOBILE OPTIMIZED */}
+      <Tabs defaultValue="progress" className="space-y-4 sm:space-y-6">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-0 h-auto sm:h-10 p-1">
+          <TabsTrigger value="progress" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
+            <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Progreso</span>
+            <span className="sm:hidden">Prog</span>
           </TabsTrigger>
-          <TabsTrigger value="adherence" className="flex items-center gap-2">
-            <Heart className="h-4 w-4" />
-            Adherencia
+          <TabsTrigger value="adherence" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
+            <Heart className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Adherencia</span>
+            <span className="sm:hidden">Adher</span>
           </TabsTrigger>
-          <TabsTrigger value="effectiveness" className="flex items-center gap-2">
-            <Trophy className="h-4 w-4" />
-            Efectividad
+          <TabsTrigger value="effectiveness" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
+            <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Efectividad</span>
+            <span className="sm:hidden">Efect</span>
           </TabsTrigger>
-          <TabsTrigger value="periodization" className="flex items-center gap-2">
-            <Activity className="h-4 w-4" />
-            Periodización
+          <TabsTrigger value="periodization" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
+            <Activity className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Periodización</span>
+            <span className="sm:hidden">Period</span>
           </TabsTrigger>
-          <TabsTrigger value="reports" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Reportes
+          <TabsTrigger value="reports" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
+            <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Reportes</span>
+            <span className="sm:hidden">Report</span>
           </TabsTrigger>
-          <TabsTrigger value="admin" className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            Admin
+          <TabsTrigger value="admin" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
+            <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Admin</span>
+            <span className="sm:hidden">Admin</span>
           </TabsTrigger>
         </TabsList>
 
@@ -369,11 +386,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
                 {Object.entries(progress?.frequencyMetrics?.muscleGroupFrequency || {}).map(([muscle, frequency]) => (
-                  <div key={muscle} className="text-center p-3 bg-purple-50 rounded-lg">
-                    <div className="text-lg font-bold text-purple-600">{frequency}</div>
-                    <div className="text-sm text-purple-600">{muscle}</div>
+                  <div key={muscle} className="text-center p-2 sm:p-3 bg-purple-50 rounded-lg">
+                    <div className="text-base sm:text-lg font-bold text-purple-600">{frequency}</div>
+                    <div className="text-xs sm:text-sm text-purple-600 truncate">{muscle}</div>
                   </div>
                 ))}
               </div>

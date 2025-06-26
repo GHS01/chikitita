@@ -49,6 +49,83 @@
   transform: scale(1.02);
 }
 
+/* 🏋️ MOBILE ACCORDION OPTIMIZATIONS */
+.mobile-card-content {
+  padding: 0.75rem 1rem 1rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .mobile-card-content {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+  }
+}
+
+/* Accordion trigger mobile optimization */
+[data-radix-accordion-trigger] {
+  text-align: left !important;
+}
+
+/* Prevent text overflow in accordion headers */
+.accordion-exercise-name {
+  word-break: break-word;
+  hyphens: auto;
+  line-height: 1.3;
+}
+
+/* Mobile badge optimization */
+@media (max-width: 639px) {
+  .mobile-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* 🧪 PANEL TESTING OPTIMIZATIONS */
+.testing-panel-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .testing-panel-buttons {
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+}
+
+/* Prevent button text overflow */
+.testing-button {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.testing-button span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mobile stats grid optimization */
+@media (max-width: 639px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .stats-card {
+    padding: 0.75rem;
+  }
+
+  .stats-number {
+    font-size: 1.25rem;
+  }
+
+  .stats-label {
+    font-size: 0.75rem;
+  }
+}
+
 /* Emoji text integration */
 .emoji-text .twemoji-text {
   vertical-align: text-bottom !important;
@@ -265,6 +342,118 @@
 @layer utilities {
   .mobile-safe-area {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* 📱 MOBILE RESPONSIVE UTILITIES - SISTEMA UNIFICADO */
+  .mobile-container {
+    @apply container mx-auto px-3 sm:px-4 lg:px-8;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .mobile-header {
+    @apply flex flex-col sm:flex-row justify-between items-start sm:items-center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .mobile-header h1 {
+    @apply text-2xl sm:text-3xl font-bold;
+    line-height: 1.2;
+  }
+
+  .mobile-header p {
+    @apply text-sm sm:text-base text-muted-foreground;
+    margin-top: 0.25rem;
+  }
+
+  .mobile-button-group {
+    @apply flex flex-wrap gap-2 sm:gap-3;
+    width: 100%;
+  }
+
+  .mobile-button-group .mobile-button {
+    @apply text-xs sm:text-sm px-2 sm:px-4 py-2;
+    min-height: 36px;
+    flex: 1 1 auto;
+    min-width: fit-content;
+  }
+
+  .mobile-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8;
+  }
+
+  .mobile-grid-main {
+    @apply lg:col-span-2 space-y-4 sm:space-y-6;
+  }
+
+  .mobile-grid-sidebar {
+    @apply space-y-4 sm:space-y-6;
+  }
+
+  .mobile-card {
+    @apply bg-card border border-border rounded-xl shadow-sm;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .mobile-card-header {
+    @apply p-3 sm:p-4 lg:p-6 pb-2 sm:pb-4;
+  }
+
+  .mobile-card-content {
+    @apply p-3 sm:p-4 lg:p-6 pt-0;
+  }
+
+  /* 📱 RESPONSIVE CARD IMPROVEMENTS */
+  .mobile-card .card-title {
+    @apply text-lg sm:text-xl lg:text-2xl font-bold;
+    line-height: 1.3;
+  }
+
+  .mobile-card .card-description {
+    @apply text-sm sm:text-base text-muted-foreground;
+    margin-top: 0.25rem;
+  }
+
+  /* 📱 BUTTON RESPONSIVE IMPROVEMENTS */
+  .mobile-button-responsive {
+    @apply px-2 sm:px-3 lg:px-4 py-2 text-xs sm:text-sm;
+    min-height: 36px;
+    white-space: nowrap;
+  }
+
+  .mobile-button-responsive .icon {
+    @apply h-3 w-3 sm:h-4 sm:w-4;
+  }
+
+  .mobile-footer-sticky {
+    @apply fixed bottom-0 left-0 right-0 bg-card border-t border-border;
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 30;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-footer-hidden {
+    transform: translateY(100%);
+  }
+
+  /* 📱 MOBILE BREAKPOINT SPECIFIC */
+  @media (max-width: 640px) {
+    .mobile-text-responsive {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+
+    .mobile-padding-sm {
+      padding: 0.75rem;
+    }
+
+    .mobile-gap-sm {
+      gap: 0.5rem;
+    }
   }
 
   /* AI Trainer Specific Styles */

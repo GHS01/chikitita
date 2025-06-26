@@ -414,14 +414,14 @@ export default function Workouts() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse space-y-8">
-          <div className="h-8 bg-muted rounded w-1/3"></div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 h-96 bg-muted rounded-2xl"></div>
-            <div className="space-y-6">
-              <div className="h-32 bg-muted rounded-xl"></div>
-              <div className="h-64 bg-muted rounded-xl"></div>
+      <div className="mobile-container py-4 sm:py-8">
+        <div className="animate-pulse space-y-6 sm:space-y-8">
+          <div className="h-6 sm:h-8 bg-muted rounded w-2/3 sm:w-1/3"></div>
+          <div className="mobile-grid">
+            <div className="mobile-grid-main h-64 sm:h-96 bg-muted rounded-2xl"></div>
+            <div className="mobile-grid-sidebar">
+              <div className="h-24 sm:h-32 bg-muted rounded-xl"></div>
+              <div className="h-48 sm:h-64 bg-muted rounded-xl"></div>
             </div>
           </div>
         </div>
@@ -558,28 +558,31 @@ export default function Workouts() {
   }, 0) || 0;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">{t('workouts.yourWorkoutPlans')}</h1>
-          <p className="text-muted-foreground">{t('workouts.aiGeneratedRoutines')}</p>
+    <div className="mobile-container py-4 sm:py-8">
+      {/* Header - MOBILE OPTIMIZED */}
+      <div className="mobile-header">
+        <div className="w-full sm:w-auto">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">{t('workouts.yourWorkoutPlans')}</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">{t('workouts.aiGeneratedRoutines')}</p>
         </div>
-        <Button
-          onClick={handleGenerateNewPlan}
-          disabled={generateIntelligentPlanMutation.isPending || generateSimplePlanMutation.isPending}
-          className="mt-4 md:mt-0 text-sm px-3 sm:px-4"
-          size="sm"
-        >
-          <Brain className="h-4 w-4 mr-2" />
-          <span className="hidden sm:inline">{(generateIntelligentPlanMutation.isPending || generateSimplePlanMutation.isPending) ? t('workouts.generating') : t('workouts.generateNewPlan')}</span>
-          <span className="sm:hidden">{(generateIntelligentPlanMutation.isPending || generateSimplePlanMutation.isPending) ? 'Generando...' : 'Generar Plan'}</span>
-        </Button>
+        <div className="w-full sm:w-auto">
+          <Button
+            onClick={handleGenerateNewPlan}
+            disabled={generateIntelligentPlanMutation.isPending || generateSimplePlanMutation.isPending}
+            className="mobile-button w-full sm:w-auto"
+            size="sm"
+          >
+            <Brain className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="text-xs sm:text-sm">
+              {(generateIntelligentPlanMutation.isPending || generateSimplePlanMutation.isPending) ? 'Generando...' : 'Generar Plan'}
+            </span>
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="mobile-grid">
         {/* Main Workout Area */}
-        <div className="lg:col-span-2">
+        <div className="mobile-grid-main">
           {/* 🛌 VERIFICAR SI ES DÍA DE DESCANSO PRIMERO */}
           {todayWorkoutStatus?.isRestDay ? (
             <Card className="text-center py-12 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 border-emerald-200 shadow-xl">
@@ -813,9 +816,9 @@ export default function Workouts() {
                         <ModernEmoji emoji="🏋️" size={20} />
                       </div>
                       <h4 className="text-xl font-bold text-slate-800">{t('workouts.todaysExercises')}</h4>
-                      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
+                      <Badge className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-0 px-3 py-1 text-sm font-semibold shadow-md hover:from-blue-600 hover:to-indigo-700 transition-all duration-200">
                         {(activeWorkout.exercises as any[]).length} ejercicios
-                      </div>
+                      </Badge>
                     </div>
                     <TooltipProvider>
                       <Accordion type="multiple" className="space-y-3">
@@ -826,80 +829,104 @@ export default function Workouts() {
                             className="border border-slate-200 rounded-xl bg-gradient-to-r from-white to-slate-50 shadow-md hover:shadow-lg transition-all duration-300"
                           >
                             <AccordionTrigger className="px-3 sm:px-4 py-3 hover:no-underline">
-                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full space-y-2 sm:space-y-0">
-                                <div className="flex items-center space-x-2 sm:space-x-3">
-                                  <div className="flex items-center space-x-2">
+                              <div className="w-full">
+                                {/* MOBILE OPTIMIZED HEADER */}
+                                <div className="flex items-start justify-between w-full">
+                                  <div className="flex items-start space-x-2 min-w-0 flex-1">
                                     <ModernEmoji
                                       emoji={getMuscleGroupEmoji(exercise.muscleGroup)}
-                                      size={20}
-                                      className="flex-shrink-0"
+                                      size={18}
+                                      className="flex-shrink-0 mt-0.5"
                                       luxury={true}
                                     />
-                                    <h5 className="font-bold text-left text-sm sm:text-base truncate text-slate-800">{exercise.name}</h5>
-                                  </div>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-1.5 rounded-full hover:from-indigo-600 hover:to-purple-700 cursor-help flex-shrink-0 transition-all duration-200 shadow-md">
-                                        <Info className="h-3 w-3" />
-                                      </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top" className="max-w-xs">
-                                      <div className="space-y-1">
-                                        <p className="font-medium flex items-center">
-                                          <ModernEmoji emoji="🎯" size={14} className="mr-1" luxury={true} />
-                                          {exercise.muscleGroup || t('workouts.muscleGroup')}
-                                        </p>
-                                        <p className="text-xs flex items-center">
-                                          <ModernEmoji emoji="⏱️" size={12} className="mr-1" />
-                                          {t('workouts.rest')}: {exercise.rest || 60}s
-                                        </p>
-                                        {exercise.weight && (
-                                          <p className="text-xs flex items-center">
-                                            <ModernEmoji emoji="🏋️" size={12} className="mr-1" luxury={true} />
-                                            {t('workouts.weight')}: {exercise.weight}kg
-                                          </p>
+                                    <div className="min-w-0 flex-1">
+                                      <h5 className="font-bold text-left text-sm sm:text-base text-slate-800 leading-tight">
+                                        {exercise.name}
+                                      </h5>
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {exercise.sets && (
+                                          <span className="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-semibold">
+                                            {exercise.sets} sets
+                                          </span>
                                         )}
-                                        <p className="text-xs flex items-center">
-                                          <ModernEmoji emoji="📊" size={12} className="mr-1" />
-                                          {t('workouts.difficulty')}: {activeWorkout.difficulty}
-                                        </p>
+                                        {exercise.reps && (
+                                          <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-xs font-semibold">
+                                            {exercise.reps} reps
+                                          </span>
+                                        )}
+                                        <Badge
+                                          variant="outline"
+                                          className={`text-xs font-bold px-2 py-0.5 rounded-full ${getMuscleGroupColor(exercise.muscleGroup)} border-0`}
+                                        >
+                                          {exercise.muscleGroup || 'General'}
+                                        </Badge>
                                       </div>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </div>
-                                <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                                  <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
-                                    {exercise.sets && (
-                                      <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded-md font-semibold">
-                                        {exercise.sets} {t('workouts.sets')}
-                                      </span>
-                                    )}
-                                    {exercise.reps && (
-                                      <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md font-semibold">
-                                        {exercise.reps} {t('workouts.reps')}
-                                      </span>
-                                    )}
-                                    {exercise.duration && (
-                                      <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded-md font-semibold">
-                                        {exercise.duration}s
-                                      </span>
-                                    )}
-                                    <span className="bg-red-100 text-red-700 px-2 py-1 rounded-md font-semibold">
-                                      {exercise.rest || 60}s descanso
-                                    </span>
+                                    </div>
                                   </div>
-                                  <Badge
-                                    variant="outline"
-                                    className={`text-xs font-bold px-3 py-1 rounded-full ${getMuscleGroupColor(exercise.muscleGroup)} self-start sm:self-center border-0`}
-                                  >
-                                    {exercise.muscleGroup || 'General'}
-                                  </Badge>
+                                  <div className="flex items-center space-x-2 flex-shrink-0 ml-2">
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-1.5 rounded-full hover:from-indigo-600 hover:to-purple-700 cursor-help transition-all duration-200 shadow-md">
+                                          <Info className="h-3 w-3" />
+                                        </div>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="left" className="max-w-xs">
+                                        <div className="space-y-1">
+                                          <p className="font-medium flex items-center">
+                                            <ModernEmoji emoji="🎯" size={14} className="mr-1" luxury={true} />
+                                            {exercise.muscleGroup || t('workouts.muscleGroup')}
+                                          </p>
+                                          <p className="text-xs flex items-center">
+                                            <ModernEmoji emoji="⏱️" size={12} className="mr-1" />
+                                            {t('workouts.rest')}: {exercise.rest || 60}s
+                                          </p>
+                                          {exercise.weight && (
+                                            <p className="text-xs flex items-center">
+                                              <ModernEmoji emoji="🏋️" size={12} className="mr-1" luxury={true} />
+                                              {t('workouts.weight')}: {exercise.weight}kg
+                                            </p>
+                                          )}
+                                          <p className="text-xs flex items-center">
+                                            <ModernEmoji emoji="📊" size={12} className="mr-1" />
+                                            {t('workouts.difficulty')}: {activeWorkout.difficulty}
+                                          </p>
+                                        </div>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </div>
                                 </div>
                               </div>
                             </AccordionTrigger>
-                            <AccordionContent className="px-3 sm:px-4 pb-4">
-                              <div className="border-t border-slate-200 pt-4 space-y-4">
-                                <div className="bg-gradient-to-r from-slate-50 to-gray-50 p-4 rounded-lg border border-slate-200">
+                            <AccordionContent className="mobile-card-content">
+                              <div className="border-t border-slate-200 pt-3 sm:pt-4 space-y-3 sm:space-y-4">
+                                {/* EXERCISE NAME FULL - MOBILE OPTIMIZED */}
+                                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 rounded-lg border border-blue-200">
+                                  <h6 className="font-bold text-base sm:text-lg text-blue-800 mb-2 leading-tight">
+                                    {exercise.name}
+                                  </h6>
+                                  <div className="flex flex-wrap gap-2 mb-3">
+                                    {exercise.sets && (
+                                      <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm font-semibold">
+                                        {exercise.sets} series
+                                      </span>
+                                    )}
+                                    {exercise.reps && (
+                                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-sm font-semibold">
+                                        {exercise.reps} reps
+                                      </span>
+                                    )}
+                                    {exercise.duration && (
+                                      <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded text-sm font-semibold">
+                                        {exercise.duration}s
+                                      </span>
+                                    )}
+                                    <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-sm font-semibold">
+                                      {exercise.rest || 60}s descanso
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="bg-gradient-to-r from-slate-50 to-gray-50 p-3 sm:p-4 rounded-lg border border-slate-200">
                                   <h6 className="font-bold text-sm mb-3 flex items-center text-slate-800">
                                     <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-1.5 rounded-lg mr-2 shadow-md">
                                       <ModernEmoji emoji="📝" size={14} luxury={true} />
@@ -910,49 +937,49 @@ export default function Workouts() {
                                     {exercise.instructions || t('workouts.performExercise')}
                                   </p>
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-lg border border-amber-200 shadow-sm">
-                                    <p className="font-bold text-amber-800 mb-3 flex items-center">
+                                <div className="grid grid-cols-1 gap-3 sm:gap-4 text-sm">
+                                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-3 sm:p-4 rounded-lg border border-amber-200 shadow-sm">
+                                    <p className="font-bold text-amber-800 mb-3 flex items-center text-sm">
                                       <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-1 rounded-md mr-2">
                                         <ModernEmoji emoji="🎯" size={14} luxury={true} />
                                       </div>
                                       {t('workouts.tips')}:
                                     </p>
-                                    <ul className="text-amber-700 space-y-2 font-medium">
+                                    <ul className="text-amber-700 space-y-2 font-medium text-sm">
                                       <li className="flex items-start">
-                                        <span className="text-amber-600 mr-2">•</span>
-                                        Mantén control en la bajada
+                                        <span className="text-amber-600 mr-2 flex-shrink-0">•</span>
+                                        <span>Mantén control en la bajada</span>
                                       </li>
                                       <li className="flex items-start">
-                                        <span className="text-amber-600 mr-2">•</span>
-                                        Respira correctamente
+                                        <span className="text-amber-600 mr-2 flex-shrink-0">•</span>
+                                        <span>Respira correctamente</span>
                                       </li>
                                       <li className="flex items-start">
-                                        <span className="text-amber-600 mr-2">•</span>
-                                        Enfócate en la forma
+                                        <span className="text-amber-600 mr-2 flex-shrink-0">•</span>
+                                        <span>Enfócate en la forma</span>
                                       </li>
                                     </ul>
                                   </div>
-                                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 shadow-sm">
-                                    <p className="font-bold text-blue-800 mb-3 flex items-center">
+                                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-3 sm:p-4 rounded-lg border border-blue-200 shadow-sm">
+                                    <p className="font-bold text-blue-800 mb-3 flex items-center text-sm">
                                       <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-1 rounded-md mr-2">
                                         📊
                                       </div>
                                       {t('workouts.details')}:
                                     </p>
-                                    <div className="text-blue-700 space-y-2 font-medium">
-                                      <p className="flex items-center">
-                                        <span className="text-blue-600 mr-2">•</span>
-                                        {t('workouts.group')}: {exercise.muscleGroup || 'General'}
+                                    <div className="text-blue-700 space-y-2 font-medium text-sm">
+                                      <p className="flex items-start">
+                                        <span className="text-blue-600 mr-2 flex-shrink-0">•</span>
+                                        <span>{t('workouts.group')}: {exercise.muscleGroup || 'General'}</span>
                                       </p>
-                                      <p className="flex items-center">
-                                        <span className="text-blue-600 mr-2">•</span>
-                                        {t('workouts.rest')}: {exercise.rest || 60} {t('workouts.seconds')}
+                                      <p className="flex items-start">
+                                        <span className="text-blue-600 mr-2 flex-shrink-0">•</span>
+                                        <span>{t('workouts.rest')}: {exercise.rest || 60} {t('workouts.seconds')}</span>
                                       </p>
                                       {exercise.weight && (
-                                        <p className="flex items-center">
-                                          <span className="text-blue-600 mr-2">•</span>
-                                          {t('workouts.weight')}: {exercise.weight}kg
+                                        <p className="flex items-start">
+                                          <span className="text-blue-600 mr-2 flex-shrink-0">•</span>
+                                          <span>{t('workouts.weight')}: {exercise.weight}kg</span>
                                         </p>
                                       )}
                                     </div>
@@ -1076,7 +1103,7 @@ export default function Workouts() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="mobile-grid-sidebar">
           {/* Mesocycle Week Info */}
           {todayWorkoutStatus?.mesocycle && (
             <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
