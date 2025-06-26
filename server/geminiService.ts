@@ -6,7 +6,10 @@
 // 🌍 SISTEMA DE TRADUCCIÓN
 import { translateWorkoutPlan, translateExerciseNamesInText } from './utils/exerciseTranslations';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyCFR2kApUeCGSWOf_tkcLe1XH4qgKjDVJ0';
+// Función para obtener la API key en runtime
+function getGeminiApiKey(): string {
+  return process.env.GEMINI_API_KEY || 'AIzaSyCFR2kApUeCGSWOf_tkcLe1XH4qgKjDVJ0';
+}
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 interface GeminiRequest {
@@ -75,7 +78,7 @@ export class GeminiService {
         }
       };
 
-      const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      const response = await fetch(`${GEMINI_API_URL}?key=${getGeminiApiKey()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -408,7 +411,7 @@ No incluyas texto adicional, solo el JSON.
         }
       };
 
-      const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      const response = await fetch(`${GEMINI_API_URL}?key=${getGeminiApiKey()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
