@@ -193,7 +193,7 @@ export default function AITrainerChat({ trainerConfig }: AITrainerChatProps) {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center pt-16 pb-0 md:pt-20 md:pb-4 lg:pb-5 px-4">
+    <div className="fixed inset-0 flex items-center justify-center pt-16 pb-0 md:pt-20 md:pb-4 lg:pb-5">
       <Card className="w-full max-w-5xl h-full flex flex-col shadow-2xl border border-luxury-gold/40 bg-luxury-charcoal/95 backdrop-blur-sm overflow-hidden rounded-2xl ring-1 ring-luxury-gold/30 shadow-luxury-gold/20">
         {/* Chat Header - Diseño Luxury Dorado */}
         <CardHeader className="border-b border-luxury-gold/20 bg-gradient-to-r from-luxury-gold to-light-gold py-4 shadow-lg">
