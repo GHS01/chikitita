@@ -132,31 +132,18 @@ export default function AITrainerChat({ trainerConfig }: AITrainerChatProps) {
     },
   });
 
-  // OCULTAR SCROLL DE LA PÁGINA COMPLETA EN DESKTOP
+  // OCULTAR SCROLL DE LA PÁGINA COMPLETA EN TODOS LOS DISPOSITIVOS
   useEffect(() => {
-    // Solo en desktop (lg y superior)
-    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    // Ocultar scroll en TODOS los dispositivos (móvil, tablet, desktop)
+    document.body.style.overflow = 'hidden';
 
-    const handleResize = () => {
-      if (mediaQuery.matches) {
-        // Desktop: Ocultar scroll de la página
-        document.body.style.overflow = 'hidden';
-      } else {
-        // Mobile/Tablet: Restaurar scroll
-        document.body.style.overflow = 'auto';
-      }
-    };
-
-    // Aplicar al montar
-    handleResize();
-
-    // Escuchar cambios de tamaño
-    mediaQuery.addEventListener('change', handleResize);
+    // También aplicar a html para mayor compatibilidad
+    document.documentElement.style.overflow = 'hidden';
 
     // Cleanup: Restaurar scroll al desmontar
     return () => {
       document.body.style.overflow = 'auto';
-      mediaQuery.removeEventListener('change', handleResize);
+      document.documentElement.style.overflow = 'auto';
     };
   }, []);
 
@@ -206,7 +193,7 @@ export default function AITrainerChat({ trainerConfig }: AITrainerChatProps) {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center pt-20 pb-4 md:pb-20 lg:pb-5 px-4">
+    <div className="fixed inset-0 flex items-center justify-center pt-16 pb-2 md:pt-20 md:pb-4 lg:pb-5 px-4">
       <Card className="w-full max-w-5xl h-full flex flex-col shadow-2xl border border-luxury-gold/40 bg-luxury-charcoal/95 backdrop-blur-sm overflow-hidden rounded-2xl ring-1 ring-luxury-gold/30 shadow-luxury-gold/20">
         {/* Chat Header - Diseño Luxury Dorado */}
         <CardHeader className="border-b border-luxury-gold/20 bg-gradient-to-r from-luxury-gold to-light-gold py-4 shadow-lg">

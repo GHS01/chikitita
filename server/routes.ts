@@ -23,6 +23,7 @@ import { getCurrentDate } from './utils/timeSystem';
 import nutritionRoutes from "./routes/nutrition";
 import intelligentWorkoutsRoutes from "./routes/intelligentWorkouts";
 import scientificWorkoutsRoutes from "./routes/scientificWorkouts";
+import { supabaseStorageService } from "./services/supabaseStorageService";
 import workoutFeedbackRoutes from "./routes/workoutFeedback";
 import analyticsRoutes from "./routes/analytics";
 import periodizationRoutes from "./routes/periodization";
@@ -1206,24 +1207,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Weight Suggestions routes
   app.use("/api/weight-suggestions", weightSuggestionsRoutes);
 
-  // 📸 Profile Photo routes
+  // 📸 Profile Photo routes - MIGRADO A SUPABASE STORAGE
+  // Inicializar bucket al arrancar servidor
+  supabaseStorageService.initializeBucket().catch(console.error);
+
   const profileUpload = multer({
-    storage: multer.diskStorage({
-      destination: async (req, file, cb) => {
-        const uploadDir = path.join(process.cwd(), 'uploads', 'profiles');
-        try {
-          await fs.mkdir(uploadDir, { recursive: true });
-          cb(null, uploadDir);
-        } catch (error) {
-          cb(error, uploadDir);
-        }
-      },
-      filename: (req: any, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const extension = path.extname(file.originalname);
-        cb(null, `profile-${req.user.userId}-${uniqueSuffix}${extension}`);
-      }
-    }),
+    storage: multer.memoryStorage(), // Cambiar a memoria para Supabase Storage
     limits: {
       fileSize: 5 * 1024 * 1024, // 5MB limit
     },
@@ -1252,24 +1241,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Photo file required" });
       }
 
-      // Delete old photo if exists
+      console.log(`📸 [API] Uploading photo for user ${req.user.userId}`);
+
+      // Eliminar foto anterior si existe
       const existingPhoto = await storage.getProfilePhoto(req.user.userId);
-      if (existingPhoto) {
-        try {
-          await fs.unlink(path.join(process.cwd(), 'uploads', 'profiles', existingPhoto.fileName));
-        } catch (error) {
-          console.warn('Failed to delete old profile photo:', error);
+      if (existingPhoto && existingPhoto.fileName) {
+        // Si es URL de Supabase Storage, eliminar de Supabase
+        if (supabaseStorageService.isSupabaseStorageUrl(existingPhoto.photoUrl)) {
+          const fileName = supabaseStorageService.extractFileNameFromUrl(existingPhoto.photoUrl);
+          if (fileName) {
+            await supabaseStorageService.deleteProfilePhoto(fileName);
+          }
+        } else {
+          // Si es archivo local, eliminar del disco
+          try {
+            await fs.unlink(path.join(process.cwd(), 'uploads', 'profiles', existingPhoto.fileName));
+          } catch (error) {
+            console.warn('Failed to delete old local photo:', error);
+          }
         }
       }
 
+      // Subir nueva foto a Supabase Storage
+      const uploadResult = await supabaseStorageService.uploadProfilePhoto(
+        req.user.userId,
+        req.file.buffer,
+        req.file.originalname,
+        req.file.mimetype
+      );
+
+      // Guardar información en base de datos
       const photoData = {
-        photoUrl: `/uploads/profiles/${req.file.filename}`,
-        fileName: req.file.filename,
-        fileSize: req.file.size,
-        mimeType: req.file.mimetype,
+        photoUrl: uploadResult.publicUrl,
+        fileName: uploadResult.fileName,
+        fileSize: uploadResult.fileSize,
+        mimeType: uploadResult.mimeType,
       };
 
       const photo = await storage.createOrUpdateProfilePhoto(req.user.userId, photoData);
+
+      console.log(`✅ [API] Photo uploaded successfully for user ${req.user.userId}`);
       res.json(photo);
     } catch (error) {
       console.error('Error uploading profile photo:', error);
@@ -1279,12 +1290,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profile/photo", authenticateToken, async (req: any, res) => {
     try {
+      console.log(`🗑️ [API] Deleting photo for user ${req.user.userId}`);
+
       const existingPhoto = await storage.getProfilePhoto(req.user.userId);
-      if (existingPhoto) {
-        try {
-          await fs.unlink(path.join(process.cwd(), 'uploads', 'profiles', existingPhoto.fileName));
-        } catch (error) {
-          console.warn('Failed to delete profile photo file:', error);
+      if (existingPhoto && existingPhoto.fileName) {
+        // Si es URL de Supabase Storage, eliminar de Supabase
+        if (supabaseStorageService.isSupabaseStorageUrl(existingPhoto.photoUrl)) {
+          const fileName = supabaseStorageService.extractFileNameFromUrl(existingPhoto.photoUrl);
+          if (fileName) {
+            await supabaseStorageService.deleteProfilePhoto(fileName);
+          }
+        } else {
+          // Si es archivo local, eliminar del disco
+          try {
+            await fs.unlink(path.join(process.cwd(), 'uploads', 'profiles', existingPhoto.fileName));
+          } catch (error) {
+            console.warn('Failed to delete local photo file:', error);
+          }
         }
       }
 
@@ -1293,6 +1315,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Profile photo not found" });
       }
 
+      console.log(`✅ [API] Photo deleted successfully for user ${req.user.userId}`);
       res.json({ message: "Profile photo deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete profile photo" });

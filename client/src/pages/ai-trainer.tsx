@@ -33,7 +33,7 @@ export default function AITrainerPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-luxury-black">
+      <div className="h-screen bg-luxury-black overflow-hidden">
         <div className="container mx-auto px-4 py-8 max-w-2xl">
           <Card className="border border-luxury-gold/40 shadow-2xl bg-luxury-charcoal/95 backdrop-blur-sm overflow-hidden rounded-3xl ring-1 ring-luxury-gold/30 shadow-luxury-gold/20">
             <CardHeader className="relative text-center bg-gradient-to-r from-luxury-gold to-light-gold backdrop-blur-sm border-b border-luxury-gold/20 py-8 rounded-t-3xl shadow-lg">
@@ -61,7 +61,7 @@ export default function AITrainerPage() {
   if (!trainerConfig || !trainerConfig.isConfigured) {
     console.log('🔧 [AITrainerPage] Showing TrainerSetup - config not found or not configured');
     return (
-      <div className="min-h-screen bg-luxury-black">
+      <div className="h-screen bg-luxury-black overflow-hidden">
         <TrainerSetup onConfigured={handleConfigured} />
       </div>
     );
@@ -70,7 +70,7 @@ export default function AITrainerPage() {
   // Show chat interface if trainer is configured
   console.log('💬 [AITrainerPage] Showing AITrainerChat - trainer is configured');
   return (
-    <div className="min-h-screen bg-luxury-black">
+    <div className="h-screen bg-luxury-black overflow-hidden">
       <AITrainerChat trainerConfig={trainerConfig} />
     </div>
   );

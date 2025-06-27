@@ -2537,6 +2537,79 @@ export class SupabaseStorage {
     }
   }
 
+  // 🔄 Métodos para migración de fotos
+  async getAllProfilePhotos(): Promise<ProfilePhoto[]> {
+    try {
+      const { data, error } = await supabase
+        .from('profile_photos')
+        .select('*')
+        .order('uploaded_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching all profile photos:', error);
+        return [];
+      }
+
+      // Map snake_case to camelCase
+      const mappedPhotos: ProfilePhoto[] = data.map(photo => ({
+        id: photo.id,
+        userId: photo.user_id,
+        photoUrl: photo.photo_url,
+        fileName: photo.file_name,
+        fileSize: photo.file_size,
+        mimeType: photo.mime_type,
+        uploadedAt: photo.uploaded_at,
+        updatedAt: photo.updated_at,
+      }));
+
+      return mappedPhotos;
+    } catch (error) {
+      console.error('Error in getAllProfilePhotos:', error);
+      return [];
+    }
+  }
+
+  async updateProfilePhotoUrl(userId: number, photoData: Partial<InsertProfilePhoto>): Promise<ProfilePhoto> {
+    try {
+      const updateData = {
+        photo_url: photoData.photoUrl,
+        file_name: photoData.fileName,
+        file_size: photoData.fileSize,
+        mime_type: photoData.mimeType,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data, error } = await supabase
+        .from('profile_photos')
+        .update(updateData)
+        .eq('user_id', userId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating profile photo URL:', error);
+        throw new Error(`Failed to update profile photo URL: ${error.message}`);
+      }
+
+      // Map snake_case to camelCase
+      const mappedPhoto: ProfilePhoto = {
+        id: data.id,
+        userId: data.user_id,
+        photoUrl: data.photo_url,
+        fileName: data.file_name,
+        fileSize: data.file_size,
+        mimeType: data.mime_type,
+        uploadedAt: data.uploaded_at,
+        updatedAt: data.updated_at,
+      };
+
+      return mappedPhoto;
+    } catch (error) {
+      console.error('Error in updateProfilePhotoUrl:', error);
+      throw error;
+    }
+  }
+
   // 🔔 Notifications operations
   async getNotifications(userId: number, limit: number = 20, includeRead: boolean = true): Promise<Notification[]> {
     try {
