@@ -1204,6 +1204,163 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Scheduler routes
   app.use("/api/scheduler", schedulerRoutes);
 
+  // 🚨 PROFILE DELETION - SECURE ENDPOINT
+  app.delete("/api/user/profile", authenticateToken, async (req, res) => {
+    try {
+      const { password } = req.body;
+      const userId = req.user.userId;
+
+      if (!password) {
+        return res.status(400).json({
+          message: "Password is required for profile deletion"
+        });
+      }
+
+      // 1. Verify user exists and get current data
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // 2. Verify password
+      const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+      if (!isValidPassword) {
+        return res.status(401).json({
+          message: "Invalid password. Profile deletion cancelled."
+        });
+      }
+
+      console.log(`🚨 [PROFILE DELETION] Starting deletion for user ${userId} (${user.username})`);
+
+      // 3. Delete profile photo from Supabase Storage if exists
+      try {
+        const profilePhoto = await storage.getProfilePhoto(userId);
+        if (profilePhoto && supabaseStorageService.isSupabaseStorageUrl(profilePhoto.photoUrl)) {
+          const fileName = supabaseStorageService.extractFileNameFromUrl(profilePhoto.photoUrl);
+          if (fileName) {
+            await supabaseStorageService.deleteProfilePhoto(fileName);
+            console.log(`✅ [PROFILE DELETION] Profile photo deleted from storage`);
+          }
+        }
+      } catch (error) {
+        console.warn(`⚠️ [PROFILE DELETION] Failed to delete profile photo:`, error);
+      }
+
+      // 4. Delete all user data in cascading order (foreign key dependencies)
+      const deletionSteps = [
+        // AI and feedback data
+        { table: 'ai_decisions', column: 'user_id' },
+        { table: 'ai_weight_suggestions', column: 'user_id' },
+        { table: 'feedback_raw_data', column: 'user_id' },
+        { table: 'user_feedback_profile', column: 'user_id' },
+
+        // Exercise logs (eliminar por session_id de workout_sessions del usuario)
+        // Se eliminará automáticamente cuando eliminemos workout_sessions
+
+        // Workout and exercise data
+        { table: 'workout_sessions', column: 'user_id' },
+        { table: 'daily_workout_plans', column: 'user_id' },
+        { table: 'workout_plans', column: 'user_id' },
+        { table: 'pre_generated_workouts', column: 'user_id' },
+        { table: 'rejected_workout_plans', column: 'user_id' },
+
+        // Progress and nutrition data
+        { table: 'progress_entries', column: 'user_id' },
+        { table: 'enhanced_progress_entries', column: 'user_id' },
+        { table: 'meals', column: 'user_id' },
+        { table: 'daily_meal_plans', column: 'user_id' },
+
+        // Analytics and tracking
+        { table: 'weekly_analytics', column: 'user_id' },
+        { table: 'weekly_summaries', column: 'user_id' },
+        { table: 'weekly_schedules', column: 'user_id' },
+        { table: 'weekly_workout_history', column: 'user_id' },
+
+        // Trainer and configuration data
+        { table: 'trainer_config', column: 'user_id' }, // ¡CRÍTICO! Esta era la que faltaba
+
+        // Notifications and preferences
+        { table: 'notifications', column: 'user_id' },
+        { table: 'profile_photos', column: 'user_id' },
+        { table: 'user_preferences', column: 'user_id' },
+        { table: 'user_split_assignments', column: 'user_id' },
+        { table: 'user_workout_preferences', column: 'user_id' },
+
+        // Additional user data
+        { table: 'water_intake', column: 'user_id' },
+        { table: 'weight_goals', column: 'user_id' },
+        { table: 'chat_messages', column: 'user_id' },
+
+        // Finally, the user record
+        { table: 'users', column: 'id' }
+      ];
+
+      // 5. Handle exercise_logs separately (uses session_id, not user_id)
+      try {
+        // Get all session IDs for this user first
+        const { data: userSessions } = await supabase
+          .from('workout_sessions')
+          .select('id')
+          .eq('user_id', userId);
+
+        if (userSessions && userSessions.length > 0) {
+          const sessionIds = userSessions.map(session => session.id);
+
+          // Delete exercise logs for all user sessions
+          const { error: exerciseLogsError } = await supabase
+            .from('exercise_logs')
+            .delete()
+            .in('session_id', sessionIds);
+
+          if (exerciseLogsError) {
+            console.warn(`⚠️ [PROFILE DELETION] Error deleting exercise_logs:`, exerciseLogsError);
+          } else {
+            console.log(`✅ [PROFILE DELETION] Deleted exercise logs for ${sessionIds.length} sessions`);
+          }
+        }
+      } catch (error) {
+        console.warn(`⚠️ [PROFILE DELETION] Failed to delete exercise_logs:`, error);
+      }
+
+      let deletedRecords = 0;
+      for (const step of deletionSteps) {
+        try {
+          const { data, error } = await supabase
+            .from(step.table)
+            .delete()
+            .eq(step.column, userId);
+
+          if (error) {
+            console.warn(`⚠️ [PROFILE DELETION] Error deleting from ${step.table}:`, error);
+          } else {
+            console.log(`✅ [PROFILE DELETION] Deleted records from ${step.table}`);
+            deletedRecords++;
+          }
+        } catch (error) {
+          console.warn(`⚠️ [PROFILE DELETION] Failed to delete from ${step.table}:`, error);
+        }
+      }
+
+      // 5. Log deletion for audit trail
+      console.log(`🚨 [PROFILE DELETION] COMPLETED for user ${userId} (${user.username})`);
+      console.log(`📊 [PROFILE DELETION] Processed ${deletionSteps.length} tables, ${deletedRecords} successful deletions`);
+
+      // 6. Return success response
+      res.json({
+        message: "Profile deleted successfully",
+        deletedTables: deletedRecords,
+        username: user.username
+      });
+
+    } catch (error) {
+      console.error("❌ [PROFILE DELETION] Error:", error);
+      res.status(500).json({
+        message: "Failed to delete profile",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Weight Suggestions routes
   app.use("/api/weight-suggestions", weightSuggestionsRoutes);
 

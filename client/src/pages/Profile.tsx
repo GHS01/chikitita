@@ -17,6 +17,7 @@ import { ProfilePhotoUpload } from "@/components/ProfilePhotoUpload";
 import { useProfilePhoto } from "@/contexts/ProfilePhotoContext";
 import { SimpleLanguageSelector } from "@/components/SimpleLanguageSelector";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { ProfileDeletionSection } from "@/components/ProfileDeletionSection";
 import { useTranslation } from 'react-i18next';
 
 export default function Profile() {
@@ -126,6 +127,11 @@ export default function Profile() {
         {/* Preferences Tab */}
         <TabsContent value="preferences" className="space-y-6">
           <PreferencesForm preferences={preferences} />
+
+          {/* 🚨 ZONA DE PELIGRO - Profile Deletion */}
+          <div className="pt-8 border-t border-destructive/20">
+            <ProfileDeletionSection />
+          </div>
         </TabsContent>
 
         {/* Rutinas Tab */}
