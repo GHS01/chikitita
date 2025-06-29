@@ -9,11 +9,77 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { ModernEmoji, EmojiText } from '@/components/ui/modern-emoji';
 import { useTranslation } from 'react-i18next';
+import { Check } from 'lucide-react';
 import { User, UserCheck, Users, Target, Flame, Brain, Dumbbell, Heart, Crosshair, Sparkles, Lightbulb, Info } from 'lucide-react';
 
 interface TrainerSetupProps {
   onConfigured: () => void;
 }
+
+// 🎨 COMPONENTE: Checkbox Dorado Elegante (Para Estilo de Interacción y Personalidad)
+interface GoldCheckboxProps {
+  checked: boolean;
+  onChange: () => void;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const GoldCheckbox = ({ checked, onChange, children, className = '' }: GoldCheckboxProps) => (
+  <div
+    onClick={onChange}
+    className={`
+      relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-300
+      hover:shadow-lg hover:scale-[1.02] transform
+      ${checked
+        ? 'border-luxury-gold bg-gradient-to-br from-luxury-gold/10 to-luxury-gold/20 shadow-lg shadow-luxury-gold/20'
+        : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/20 hover:bg-luxury-black/30'
+      }
+      ${className}
+    `}
+  >
+    {/* Checkmark Elegante */}
+    <div className={`
+      absolute top-2 right-2 w-6 h-6 rounded-full border-2 transition-all duration-300
+      flex items-center justify-center
+      ${checked
+        ? 'border-luxury-gold bg-luxury-gold text-luxury-black shadow-md'
+        : 'border-luxury-gold/40 bg-transparent'
+      }
+    `}>
+      {checked && <Check className="w-4 h-4 font-bold" />}
+    </div>
+
+    {/* Contenido */}
+    <div className="pr-8">
+      {children}
+    </div>
+  </div>
+);
+
+// 🎨 COMPONENTE: Botón Simple Sin Checkmarks (Para Género)
+interface SimpleGoldButtonProps {
+  checked: boolean;
+  onChange: () => void;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const SimpleGoldButton = ({ checked, onChange, children, className = '' }: SimpleGoldButtonProps) => (
+  <div
+    onClick={onChange}
+    className={`
+      cursor-pointer rounded-xl border-2 p-4 transition-all duration-300
+      hover:shadow-lg hover:scale-[1.02] transform
+      ${checked
+        ? 'border-luxury-gold bg-gradient-to-br from-luxury-gold/10 to-luxury-gold/20 shadow-lg shadow-luxury-gold/20'
+        : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/20 hover:bg-luxury-black/30'
+      }
+      ${className}
+    `}
+  >
+    {children}
+  </div>
+);
 
 interface ToneOption {
   value: string;
@@ -329,30 +395,57 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
   const showInteractionStyle = formData.personalityType === 'custom';
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <Card className="border border-luxury-gold/40 shadow-2xl bg-luxury-charcoal/95 backdrop-blur-sm overflow-hidden rounded-3xl ring-1 ring-luxury-gold/30 shadow-luxury-gold/20">
-        {/* Header Luxury - EXACTO COMO EL CHAT */}
-        <CardHeader className="relative text-center bg-gradient-to-r from-luxury-gold to-light-gold backdrop-blur-sm border-b border-luxury-gold/20 py-8 -mx-6 -mt-6 mb-0 rounded-t-3xl shadow-lg">
-          {/* Overlay que cubre TODO el header */}
-          <div className="absolute inset-0 bg-gradient-to-r from-luxury-black/10 via-transparent to-white/5 rounded-t-3xl"></div>
-          <div className="relative px-6">
-            <CardTitle className="relative text-3xl font-black text-luxury-black bg-clip-text flex items-center justify-center gap-3 mb-2 drop-shadow-sm">
-              <div className="relative">
-                <div className="absolute inset-0 bg-luxury-black/20 rounded-2xl blur-sm opacity-75"></div>
-                <div className="relative bg-luxury-black/20 rounded-2xl p-2 border border-luxury-black/30 shadow-xl">
-                  <ModernEmoji emoji="🧠" size={32} luxury={true} className="filter-none" />
+    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-2xl">
+      <Card className="border border-luxury-gold/40 shadow-2xl bg-luxury-charcoal/95 backdrop-blur-sm overflow-hidden rounded-2xl sm:rounded-3xl ring-1 ring-luxury-gold/30 shadow-luxury-gold/20">
+        {/* Header Luxury - RESPONSIVE MÓVIL MEJORADO */}
+        <CardHeader className="relative text-center bg-gradient-to-r from-luxury-gold to-light-gold backdrop-blur-sm border-b border-luxury-gold/20 py-6 sm:py-8 -mx-6 -mt-6 mb-0 rounded-t-2xl sm:rounded-t-3xl shadow-lg">
+          {/* Overlay que cubre TODO el header - SIN COMPONENTES BLANCOS PARA MÓVILES */}
+          <div className="absolute inset-0 bg-gradient-to-r from-luxury-black/10 via-transparent to-luxury-black/5 rounded-t-2xl sm:rounded-t-3xl"></div>
+          <div className="relative px-2 sm:px-4 md:px-6">
+            <CardTitle className="relative text-xl sm:text-2xl md:text-3xl font-black text-luxury-black bg-clip-text flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-2 drop-shadow-sm">
+              {/* Icono Responsivo */}
+              <div className="relative flex-shrink-0">
+                <div className="absolute inset-0 bg-luxury-black/20 rounded-xl sm:rounded-2xl blur-sm opacity-75"></div>
+                <div className="relative bg-luxury-black/20 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 border border-luxury-black/30 shadow-xl">
+                  {/* Icono pequeño para móvil */}
+                  <div className="block sm:hidden">
+                    <ModernEmoji emoji="🧬" size={20} luxury={true} className="filter-none" />
+                  </div>
+                  {/* Icono mediano para tablet */}
+                  <div className="hidden sm:block md:hidden">
+                    <ModernEmoji emoji="🧬" size={26} luxury={true} className="filter-none" />
+                  </div>
+                  {/* Icono grande para desktop */}
+                  <div className="hidden md:block">
+                    <ModernEmoji emoji="🧬" size={32} luxury={true} className="filter-none" />
+                  </div>
                 </div>
               </div>
-              <EmojiText size={32} luxury={true}>{t('aiTrainer.setupTitle')}</EmojiText>
+
+              {/* Texto Responsivo */}
+              <div className="text-center sm:text-left min-w-0">
+                {/* Texto pequeño para móvil */}
+                <div className="block sm:hidden">
+                  <EmojiText size={18} luxury={true} className="leading-tight">{t('aiTrainer.setupTitle')}</EmojiText>
+                </div>
+                {/* Texto mediano para tablet */}
+                <div className="hidden sm:block md:hidden">
+                  <EmojiText size={22} luxury={true} className="leading-tight">{t('aiTrainer.setupTitle')}</EmojiText>
+                </div>
+                {/* Texto grande para desktop */}
+                <div className="hidden md:block">
+                  <EmojiText size={28} luxury={true} className="leading-tight">{t('aiTrainer.setupTitle')}</EmojiText>
+                </div>
+              </div>
             </CardTitle>
-            <CardDescription className="relative text-lg text-luxury-black/80 font-semibold">
+            <CardDescription className="relative text-sm sm:text-base md:text-lg text-luxury-black/80 font-semibold px-1 sm:px-2 md:px-0 text-center leading-tight">
               {t('aiTrainer.setupSubtitle')}
             </CardDescription>
           </div>
         </CardHeader>
 
-        {/* Contenido Luxury - COLORES EXACTOS FITBRO-LANDING */}
-        <CardContent className="p-8 pt-8 bg-luxury-black/60 text-white">
+        {/* Contenido Luxury - RESPONSIVE MÓVIL MEJORADO */}
+        <CardContent className="p-4 sm:p-8 pt-6 sm:pt-8 bg-luxury-black/60 text-white">
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
             {/* Nombre del Entrenador - Luxury */}
             <div ref={setFieldRef('trainerName')} className="space-y-3">
@@ -377,44 +470,37 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
               )}
             </div>
 
-            {/* Género del Entrenador - Luxury */}
+            {/* Género del Entrenador - ESTILO SIMPLE SIN CHECKMARKS */}
             <div ref={setFieldRef('trainerGender')} className="space-y-4">
               <Label className="text-base font-semibold text-luxury-gold flex items-center gap-2">
                 <div className="w-2 h-2 bg-luxury-gold rounded-full"></div>
                 {t('aiTrainer.trainerGender')}
               </Label>
-              <RadioGroup
-                value={formData.trainerGender}
-                onValueChange={(value) => handleInputChange('trainerGender', value)}
-                className="grid grid-cols-2 gap-4"
-              >
-                <label htmlFor="trainer-male" className={`relative cursor-pointer rounded-2xl border-2 p-4 transition-all duration-300 hover:shadow-lg ${
-                  formData.trainerGender === 'male'
-                    ? 'border-luxury-gold bg-luxury-gold/20 shadow-md shadow-luxury-gold/30'
-                    : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/40'
-                }`}>
+              <div className="grid grid-cols-2 gap-4">
+                <SimpleGoldButton
+                  checked={formData.trainerGender === 'male'}
+                  onChange={() => handleInputChange('trainerGender', 'male')}
+                >
                   <div className="flex items-center space-x-3">
                     <User className="w-7 h-7 text-blue-400" />
                     <div className="flex-1">
                       <EmojiText className="font-medium text-white" luxury={true}>{t('aiTrainer.masculine')}</EmojiText>
                     </div>
-                    <RadioGroupItem value="male" id="trainer-male" />
                   </div>
-                </label>
-                <label htmlFor="trainer-female" className={`relative cursor-pointer rounded-2xl border-2 p-4 transition-all duration-300 hover:shadow-lg ${
-                  formData.trainerGender === 'female'
-                    ? 'border-luxury-gold bg-luxury-gold/20 shadow-md shadow-luxury-gold/30'
-                    : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/40'
-                }`}>
+                </SimpleGoldButton>
+
+                <SimpleGoldButton
+                  checked={formData.trainerGender === 'female'}
+                  onChange={() => handleInputChange('trainerGender', 'female')}
+                >
                   <div className="flex items-center space-x-3">
                     <UserCheck className="w-7 h-7 text-pink-400" />
                     <div className="flex-1">
                       <EmojiText className="font-medium text-white" luxury={true}>{t('aiTrainer.feminine')}</EmojiText>
                     </div>
-                    <RadioGroupItem value="female" id="trainer-female" />
                   </div>
-                </label>
-              </RadioGroup>
+                </SimpleGoldButton>
+              </div>
               {errors.trainerGender && (
                 <p className="text-sm text-red-500 flex items-center gap-1">
                   <span className="w-1 h-1 bg-red-500 rounded-full"></span>
@@ -423,51 +509,46 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
               )}
             </div>
 
-            {/* Tu Género - Luxury */}
+            {/* Tu Género - ESTILO SIMPLE SIN CHECKMARKS */}
             <div ref={setFieldRef('userGender')} className="space-y-4">
               <Label className="text-base font-semibold text-luxury-gold flex items-center gap-2">
                 <div className="w-2 h-2 bg-luxury-gold rounded-full"></div>
                 {t('aiTrainer.yourGender')}
               </Label>
-              <RadioGroup
-                value={formData.userGender}
-                onValueChange={(value) => handleInputChange('userGender', value)}
-                className="grid grid-cols-3 gap-3"
-              >
-                <label htmlFor="user-male" className={`relative cursor-pointer rounded-2xl border-2 p-3 transition-all duration-300 hover:shadow-lg ${
-                  formData.userGender === 'male'
-                    ? 'border-luxury-gold bg-luxury-gold/20 shadow-md shadow-luxury-gold/30'
-                    : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/40'
-                }`}>
+              <div className="grid grid-cols-3 gap-3">
+                <SimpleGoldButton
+                  checked={formData.userGender === 'male'}
+                  onChange={() => handleInputChange('userGender', 'male')}
+                  className="p-3"
+                >
                   <div className="flex flex-col items-center space-y-2 text-center">
                     <User className="w-8 h-8 text-blue-400" />
                     <EmojiText className="font-medium text-sm text-white" luxury={true}>Masculino</EmojiText>
-                    <RadioGroupItem value="male" id="user-male" className="mt-1" />
                   </div>
-                </label>
-                <label htmlFor="user-female" className={`relative cursor-pointer rounded-2xl border-2 p-3 transition-all duration-300 hover:shadow-lg ${
-                  formData.userGender === 'female'
-                    ? 'border-luxury-gold bg-luxury-gold/20 shadow-md shadow-luxury-gold/30'
-                    : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/40'
-                }`}>
+                </SimpleGoldButton>
+
+                <SimpleGoldButton
+                  checked={formData.userGender === 'female'}
+                  onChange={() => handleInputChange('userGender', 'female')}
+                  className="p-3"
+                >
                   <div className="flex flex-col items-center space-y-2 text-center">
                     <UserCheck className="w-8 h-8 text-pink-400" />
                     <EmojiText className="font-medium text-sm text-white" luxury={true}>Femenino</EmojiText>
-                    <RadioGroupItem value="female" id="user-female" className="mt-1" />
                   </div>
-                </label>
-                <label htmlFor="user-other" className={`relative cursor-pointer rounded-2xl border-2 p-3 transition-all duration-300 hover:shadow-lg ${
-                  formData.userGender === 'other'
-                    ? 'border-luxury-gold bg-luxury-gold/20 shadow-md shadow-luxury-gold/30'
-                    : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/40'
-                }`}>
+                </SimpleGoldButton>
+
+                <SimpleGoldButton
+                  checked={formData.userGender === 'other'}
+                  onChange={() => handleInputChange('userGender', 'other')}
+                  className="p-3"
+                >
                   <div className="flex flex-col items-center space-y-2 text-center">
                     <Users className="w-8 h-8 text-purple-400" />
                     <EmojiText className="font-medium text-sm text-white" luxury={true}>Otro</EmojiText>
-                    <RadioGroupItem value="other" id="user-other" className="mt-1" />
                   </div>
-                </label>
-              </RadioGroup>
+                </SimpleGoldButton>
+              </div>
               {errors.userGender && (
                 <p className="text-sm text-red-500 flex items-center gap-1">
                   <span className="w-1 h-1 bg-red-500 rounded-full"></span>
@@ -491,20 +572,13 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
                   <Lightbulb className="w-4 h-4 text-yellow-400" />
                   <span><strong className="text-luxury-gold">Tip:</strong> Selecciona un estilo base que se combinará con tu descripción personalizada</span>
                 </div>
-              <RadioGroup
-                value={formData.interactionTone}
-                onValueChange={(value) => handleInputChange('interactionTone', value)}
-                className="grid gap-4"
-              >
+              <div className="grid gap-4">
                 {toneOptions.map((option) => (
-                  <label
+                  <GoldCheckbox
                     key={option.value}
-                    htmlFor={`tone-${option.value}`}
-                    className={`relative cursor-pointer rounded-2xl border-2 p-5 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${
-                      formData.interactionTone === option.value
-                        ? 'border-luxury-gold bg-gradient-to-br from-luxury-gold/20 to-luxury-black/20 shadow-lg shadow-luxury-gold/20'
-                        : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/20 hover:bg-luxury-black/30'
-                    }`}
+                    checked={formData.interactionTone === option.value}
+                    onChange={() => handleInputChange('interactionTone', option.value)}
+                    className="p-5"
                   >
                     <div className="flex items-center space-x-4">
                       <div className={`p-3 rounded-xl ${
@@ -522,17 +596,10 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
                           <EmojiText size={14} luxury={true}>{option.description}</EmojiText>
                         </div>
                       </div>
-                      <div className={`p-2 rounded-full ${
-                        formData.interactionTone === option.value
-                          ? 'bg-luxury-gold/30'
-                          : 'bg-luxury-black/40 border border-luxury-gold/20'
-                      } transition-all duration-300`}>
-                        <RadioGroupItem value={option.value} id={`tone-${option.value}`} />
-                      </div>
                     </div>
-                  </label>
+                  </GoldCheckbox>
                 ))}
-              </RadioGroup>
+              </div>
                 {errors.interactionTone && (
                   <p className="text-sm text-red-500 flex items-center gap-1">
                     <span className="w-1 h-1 bg-red-500 rounded-full"></span>
@@ -657,20 +724,13 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
                       Personalidad del Entrenador
                     </Label>
 
-                    <RadioGroup
-                      value={formData.personalityType}
-                      onValueChange={handlePersonalityChange}
-                      className="grid gap-3"
-                    >
+                    <div className="grid gap-3">
                       {personalityOptions.map((personality) => (
-                        <label
+                        <GoldCheckbox
                           key={personality.value}
-                          htmlFor={`personality-${personality.value}`}
-                          className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-300 hover:shadow-md ${
-                            formData.personalityType === personality.value
-                              ? 'border-luxury-gold bg-gradient-to-br from-luxury-gold/20 to-luxury-black/20 shadow-md shadow-luxury-gold/20'
-                              : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/20'
-                          }`}
+                          checked={formData.personalityType === personality.value}
+                          onChange={() => handlePersonalityChange(personality.value)}
+                          className="p-4"
                         >
                           <div className="flex items-start space-x-3">
                             {personality.icon === 'Target' && <Target className="w-6 h-6 text-luxury-gold" />}
@@ -693,19 +753,15 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
                                 <strong>Frases típicas:</strong> "{personality.phrases[0]}", "{personality.phrases[1]}"
                               </div>
                             </div>
-                            <RadioGroupItem value={personality.value} id={`personality-${personality.value}`} />
                           </div>
-                        </label>
+                        </GoldCheckbox>
                       ))}
 
                       {/* Personalidad Custom */}
-                      <label
-                        htmlFor="personality-custom"
-                        className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-300 hover:shadow-md ${
-                          formData.personalityType === 'custom'
-                            ? 'border-light-gold bg-gradient-to-br from-light-gold/20 to-luxury-gold/20 shadow-md shadow-light-gold/20'
-                            : 'border-luxury-gold/30 hover:border-luxury-gold/50 bg-luxury-black/20'
-                        }`}
+                      <GoldCheckbox
+                        checked={formData.personalityType === 'custom'}
+                        onChange={() => handlePersonalityChange('custom')}
+                        className="p-4"
                       >
                         <div className="flex items-start space-x-3">
                           <Sparkles className="w-6 h-6 text-yellow-400" />
@@ -720,10 +776,9 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
                               <strong>Ejemplos:</strong> Arnold, Rocky, Goku, Bulma, Vegeta, Wonder Woman, Captain America
                             </div>
                           </div>
-                          <RadioGroupItem value="custom" id="personality-custom" />
                         </div>
-                      </label>
-                    </RadioGroup>
+                      </GoldCheckbox>
+                    </div>
 
                     {/* Input para personalidad custom */}
                     {formData.personalityType === 'custom' && (
@@ -766,7 +821,10 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
                     <span className="text-luxury-black font-bold">{t('aiTrainer.configuring')}</span>
                   </div>
                 ) : (
-                  <EmojiText className="text-luxury-black font-bold" luxury={true}>{t('aiTrainer.configureTrainer')}</EmojiText>
+                  <div className="flex items-center gap-3">
+                    <Check className="w-6 h-6 text-luxury-black" />
+                    <EmojiText className="text-luxury-black font-bold" luxury={true}>{t('aiTrainer.configureTrainer')}</EmojiText>
+                  </div>
                 )}
               </Button>
             </div>
