@@ -709,8 +709,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('✅ [WEEK FIXED] Calculated correct week number:', correctWeekNumber);
 
         // 🎯 OBTENER INFORMACIÓN DEL SPLIT ACTUAL PARA TÍTULO INTELIGENTE
-        const dayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+        const currentDate = new Date();
+        const dayOfWeek = currentDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
         let splitInfo = null;
+
+        console.log('🔍 [Routes] Date debug:', {
+          currentDate: currentDate.toISOString(),
+          dayOfWeek,
+          getDay: currentDate.getDay(),
+          localString: currentDate.toLocaleDateString('en-US', { weekday: 'long' })
+        });
 
         try {
           console.log('🔍 [Routes] Looking for split assignment:', { userId: todayPlan.userId, dayOfWeek });

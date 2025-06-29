@@ -45,6 +45,100 @@ async function getNextWorkoutDay(userId: number, currentDay: string): Promise<st
   }
 }
 
+// 🎯 NUEVA FUNCIÓN: Calcular fecha y día correctos para rutina
+async function getWorkoutDateAndDay(userId: number): Promise<{
+  workoutDate: string;
+  dayOfWeek: string;
+  isToday: boolean;
+  message?: string;
+}> {
+  try {
+    const today = new Date();
+    const todayString = getCurrentDate();
+    const todayDayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+
+    console.log('📅 [getWorkoutDateAndDay] Checking workout date for user:', userId);
+    console.log('📅 [getWorkoutDateAndDay] Today is:', todayDayOfWeek, '(', todayString, ')');
+
+    // Verificar si hoy es día de entrenamiento
+    const todayAssignment = await splitAssignmentService.getSplitForDay(userId, todayDayOfWeek);
+
+    if (todayAssignment) {
+      // Hoy es día de entrenamiento - usar fecha actual
+      console.log('✅ [getWorkoutDateAndDay] Today is training day, using current date');
+      return {
+        workoutDate: todayString,
+        dayOfWeek: todayDayOfWeek,
+        isToday: true,
+        message: 'Rutina generada para hoy'
+      };
+    } else {
+      // Hoy es día de descanso - buscar próximo día de entrenamiento
+      console.log('🛌 [getWorkoutDateAndDay] Today is rest day, finding next training day');
+      const nextWorkoutDay = await getNextWorkoutDay(userId, todayDayOfWeek);
+
+      if (nextWorkoutDay) {
+        const nextWorkoutDate = getDateForDay(nextWorkoutDay);
+        console.log('✅ [getWorkoutDateAndDay] Next training day found:', nextWorkoutDay, '(', nextWorkoutDate, ')');
+        return {
+          workoutDate: nextWorkoutDate,
+          dayOfWeek: nextWorkoutDay,
+          isToday: false,
+          message: `Rutina generada para ${nextWorkoutDay} (${nextWorkoutDate})`
+        };
+      } else {
+        // Fallback: usar fecha actual si no hay días de entrenamiento configurados
+        console.log('⚠️ [getWorkoutDateAndDay] No training days found, using current date as fallback');
+        return {
+          workoutDate: todayString,
+          dayOfWeek: todayDayOfWeek,
+          isToday: true,
+          message: 'No hay días de entrenamiento configurados, usando fecha actual'
+        };
+      }
+    }
+  } catch (error) {
+    console.error('❌ [getWorkoutDateAndDay] Error:', error);
+    // Fallback en caso de error
+    const todayString = getCurrentDate();
+    const todayDayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    return {
+      workoutDate: todayString,
+      dayOfWeek: todayDayOfWeek,
+      isToday: true,
+      message: 'Error calculando fecha, usando fecha actual'
+    };
+  }
+}
+
+// 🎯 NUEVA FUNCIÓN: Calcular fecha para un día específico
+function getDateForDay(dayName: string): string {
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const today = new Date();
+  const currentDayIndex = today.getDay();
+  const targetDayIndex = days.indexOf(dayName.toLowerCase());
+
+  // Validación: si el día no existe, usar fecha actual
+  if (targetDayIndex === -1) {
+    console.error('❌ [getDateForDay] Invalid day name:', dayName, 'using current date');
+    return getCurrentDate();
+  }
+
+  let daysToAdd = targetDayIndex - currentDayIndex;
+  if (daysToAdd <= 0) {
+    daysToAdd += 7; // Próxima semana
+  }
+
+  const targetDate = new Date(today);
+  targetDate.setDate(today.getDate() + daysToAdd);
+
+  // Retornar en formato YYYY-MM-DD
+  const year = targetDate.getFullYear();
+  const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+  const day = String(targetDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 // Schema para feedback de rutina
 const workoutFeedbackSchema = z.object({
   satisfactionRating: z.number().min(1).max(5).optional(), // Opcional para modo científico
@@ -713,9 +807,10 @@ router.post('/generate-simple', authenticateToken, async (req, res) => {
 router.get('/today', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
-    const today = getCurrentDate(); // 🔧 FIX: Usar fecha local
+    const todayString = getCurrentDate(); // 🔧 FIX: Usar fecha local
+    const today = new Date(); // 🔧 FIX: Crear objeto Date para métodos de fecha
 
-    console.log('🛌 [IntelligentWorkouts] Checking today status for user:', userId, 'date:', today);
+    console.log('🛌 [IntelligentWorkouts] Checking today status for user:', userId, 'date:', todayString);
 
     // 🛌 PASO 1: Verificar si hay mesociclo activo
     const activeMesocycle = await scientificWorkoutService.getActiveMesocycle(userId);
@@ -728,7 +823,13 @@ router.get('/today', authenticateToken, async (req, res) => {
     console.log('✅ [IntelligentWorkouts] Active mesocycle found:', activeMesocycle.mesocycle_name);
 
     // 🛌 PASO 2: Verificar si hoy tiene asignación de split
-    const dayOfWeek = getDayOfWeek(today);
+    const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    console.log('🗓️ [IntelligentWorkouts] Date debug:', {
+      currentDate: today.toISOString(),
+      dayOfWeek,
+      getDay: today.getDay(),
+      localString: today.toLocaleDateString('en-US', { weekday: 'long' })
+    });
     console.log('🗓️ [IntelligentWorkouts] Today is:', dayOfWeek);
 
     const splitAssignment = await splitAssignmentService.getSplitForDay(userId, dayOfWeek);

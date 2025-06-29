@@ -991,18 +991,20 @@ const WorkoutFloatingWindow = React.memo(function WorkoutFloatingWindow({
             {workoutPlan.name}
           </h3>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => setIsMinimized(true)}
-            className="text-white/80 hover:text-white text-lg font-light w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors"
+            className="text-white/80 hover:text-white hover:bg-white/20 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 font-medium text-lg leading-none"
+            title="Minimizar"
           >
             −
           </button>
           <button
             onClick={onClose}
-            className="text-white/80 hover:text-white w-6 h-6 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
+            className="text-white/80 hover:text-white hover:bg-white/20 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200"
+            title="Cerrar"
           >
-            <X size={14} />
+            <X size={16} />
           </button>
         </div>
       </div>

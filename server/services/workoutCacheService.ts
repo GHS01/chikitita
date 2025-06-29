@@ -216,8 +216,17 @@ export class WorkoutCacheService {
       // Si no está en cache, generar on-demand
       console.log('🔄 [WorkoutCache] Workout not in cache, generating on-demand...');
 
-      const date = new Date(workoutDate);
+      // 🔧 FIX: Usar fecha local para evitar problemas de timezone
+      const date = new Date(workoutDate + 'T12:00:00'); // Agregar hora para evitar timezone issues
       const dayName = this.getDayName(date.getDay());
+
+      console.log('🗓️ [WorkoutCache] Date calculation:', {
+        workoutDate,
+        dateObject: date.toISOString(),
+        dayIndex: date.getDay(),
+        dayName,
+        localDate: date.toLocaleDateString()
+      });
 
       // Obtener asignación para este día
       const splitAssignment = await splitAssignmentService.getSplitForDay(userId, dayName);

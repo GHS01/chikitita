@@ -176,8 +176,25 @@ export default function Workouts() {
     staleTime: 5 * 60 * 1000, // 🔧 FIXED: Restored normal cache
   });
 
-  // 🛌 DESHABILITADO TEMPORALMENTE: Query para verificar si hoy es día de descanso
-  const todayWorkoutStatus = null; // 🚨 DISABLED to stop infinite loop
+  // 🛌 REACTIVADO: Query para verificar si hoy es día de descanso
+  const { data: todayWorkoutStatus } = useQuery({
+    queryKey: ['/api/intelligent-workouts/today'],
+    queryFn: async () => {
+      const response = await fetch('/api/intelligent-workouts/today', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch today workout status');
+      }
+
+      return response.json();
+    },
+    staleTime: 5 * 60 * 1000, // Cache por 5 minutos
+    refetchOnWindowFocus: false, // Evitar refetch automático
+  });
 
   // Obtener datos del usuario para la descripción personalizada
   const { data: user } = useQuery({
@@ -515,12 +532,19 @@ export default function Workouts() {
     console.log('🔍 [DEBUG] todayWorkoutStatus:', todayWorkoutStatus);
     console.log('🔍 [DEBUG] todayWorkoutStatus?.mesocycle:', todayWorkoutStatus?.mesocycle);
 
-    if (todayWorkoutStatus?.mesocycle) {
+    if (todayWorkoutStatus?.mesocycle?.start_date) {
       const startDate = new Date(todayWorkoutStatus.mesocycle.start_date);
+
+      // Validar que la fecha sea válida
+      if (isNaN(startDate.getTime())) {
+        console.log('⚠️ [Mesocycle Week] Invalid start date, using fallback');
+        return activeWorkout?.weekNumber || 1;
+      }
+
       const today = new Date();
       const diffTime = Math.abs(today.getTime() - startDate.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      const currentWeek = Math.min(Math.ceil(diffDays / 7), todayWorkoutStatus.mesocycle.duration_weeks || 6);
+      const currentWeek = Math.min(Math.ceil(diffDays / 7), 6); // Fallback a 6 semanas por defecto
       console.log('🗓️ [Mesocycle Week] Calculated week:', currentWeek, 'from start date:', startDate.toISOString());
       return currentWeek;
     }
@@ -1077,19 +1101,7 @@ export default function Workouts() {
                   </div>
                 )}
 
-                {/* Generate Plan Button - Solo si el perfil está listo */}
-                {isReady && (
-                  <Button
-                    onClick={handleGenerateNewPlan}
-                    disabled={generateIntelligentPlanMutation.isPending || generateSimplePlanMutation.isPending}
-                    size="sm"
-                    className="text-sm px-4 py-2"
-                  >
-                    <Brain className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">{(generateIntelligentPlanMutation.isPending || generateSimplePlanMutation.isPending) ? t('workouts.generating') : t('workouts.generateFirstPlan')}</span>
-                    <span className="sm:hidden">{(generateIntelligentPlanMutation.isPending || generateSimplePlanMutation.isPending) ? 'Generando...' : 'Generar Plan'}</span>
-                  </Button>
-                )}
+                {/* ELIMINADO: Botón duplicado que confundía al usuario */}
 
                 {/* Message when profile is not ready */}
                 {!isReady && !isLoadingCompleteness && (

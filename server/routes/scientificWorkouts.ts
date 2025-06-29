@@ -19,6 +19,122 @@ import { mesocycleAutoMigrationMiddleware } from '../middleware/autoMigrationMid
 
 const router = express.Router();
 
+// 🎯 FUNCIONES HELPER PARA FECHAS DE RUTINAS
+async function getNextWorkoutDay(userId: number, currentDay: string): Promise<string | null> {
+  try {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const currentIndex = days.indexOf(currentDay);
+
+    // Buscar el próximo día con asignación de split
+    for (let i = 1; i <= 7; i++) {
+      const nextIndex = (currentIndex + i) % 7;
+      const nextDay = days[nextIndex];
+
+      const assignment = await splitAssignmentService.getSplitForDay(userId, nextDay);
+      if (assignment) {
+        return nextDay;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('❌ [getNextWorkoutDay] Error:', error);
+    return null;
+  }
+}
+
+function getDateForDay(dayName: string): string {
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const today = new Date();
+  const currentDayIndex = today.getDay();
+  const targetDayIndex = days.indexOf(dayName.toLowerCase());
+
+  // Validación: si el día no existe, usar fecha actual
+  if (targetDayIndex === -1) {
+    console.error('❌ [getDateForDay] Invalid day name:', dayName, 'using current date');
+    return getCurrentDate();
+  }
+
+  let daysToAdd = targetDayIndex - currentDayIndex;
+  if (daysToAdd <= 0) {
+    daysToAdd += 7; // Próxima semana
+  }
+
+  const targetDate = new Date(today);
+  targetDate.setDate(today.getDate() + daysToAdd);
+
+  // Retornar en formato YYYY-MM-DD
+  const year = targetDate.getFullYear();
+  const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+  const day = String(targetDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+async function getWorkoutDateAndDay(userId: number): Promise<{
+  workoutDate: string;
+  dayOfWeek: string;
+  isToday: boolean;
+  message?: string;
+}> {
+  try {
+    const today = new Date();
+    const todayString = getCurrentDate();
+    const todayDayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+
+    console.log('📅 [getWorkoutDateAndDay] Checking workout date for user:', userId);
+    console.log('📅 [getWorkoutDateAndDay] Today is:', todayDayOfWeek, '(', todayString, ')');
+
+    // Verificar si hoy es día de entrenamiento
+    const todayAssignment = await splitAssignmentService.getSplitForDay(userId, todayDayOfWeek);
+
+    if (todayAssignment) {
+      // Hoy es día de entrenamiento - usar fecha actual
+      console.log('✅ [getWorkoutDateAndDay] Today is training day, using current date');
+      return {
+        workoutDate: todayString,
+        dayOfWeek: todayDayOfWeek,
+        isToday: true,
+        message: 'Rutina generada para hoy'
+      };
+    } else {
+      // Hoy es día de descanso - buscar próximo día de entrenamiento
+      console.log('🛌 [getWorkoutDateAndDay] Today is rest day, finding next training day');
+      const nextWorkoutDay = await getNextWorkoutDay(userId, todayDayOfWeek);
+
+      if (nextWorkoutDay) {
+        const nextWorkoutDate = getDateForDay(nextWorkoutDay);
+        console.log('✅ [getWorkoutDateAndDay] Next training day found:', nextWorkoutDay, '(', nextWorkoutDate, ')');
+        return {
+          workoutDate: nextWorkoutDate,
+          dayOfWeek: nextWorkoutDay,
+          isToday: false,
+          message: `Rutina generada para ${nextWorkoutDay} (${nextWorkoutDate})`
+        };
+      } else {
+        // Fallback: usar fecha actual si no hay días de entrenamiento configurados
+        console.log('⚠️ [getWorkoutDateAndDay] No training days found, using current date as fallback');
+        return {
+          workoutDate: todayString,
+          dayOfWeek: todayDayOfWeek,
+          isToday: true,
+          message: 'No hay días de entrenamiento configurados, usando fecha actual'
+        };
+      }
+    }
+  } catch (error) {
+    console.error('❌ [getWorkoutDateAndDay] Error:', error);
+    // Fallback en caso de error
+    const todayString = getCurrentDate();
+    const todayDayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    return {
+      workoutDate: todayString,
+      dayOfWeek: todayDayOfWeek,
+      isToday: true,
+      message: 'Error calculando fecha, usando fecha actual'
+    };
+  }
+}
+
 // Schema para generación de rutina científica
 const scientificWorkoutGenerationSchema = z.object({
   selectedSplitId: z.number(),
@@ -273,16 +389,22 @@ router.post('/generate-workout', authenticateToken, async (req, res) => {
       isScientificMode: true
     };
 
+    // 🎯 NUEVA LÓGICA: Calcular fecha correcta para rutina (respeta días de descanso)
+    const workoutDateInfo = await getWorkoutDateAndDay(userId);
+    console.log('📅 [ScientificWorkouts]', workoutDateInfo.message);
+
     // Guardar rutina diaria en base de datos
     const dailyPlan = {
-      workoutDate: getCurrentDate(),
+      workoutDate: workoutDateInfo.workoutDate,
       exercises: workoutPlan.exercises,
       estimatedDuration: workoutPlan.duration,
       targetMuscleGroups: workoutPlan.targetMuscleGroups || [],
       generatedBasedOn: {
         ...workoutPlan.generatedBasedOn,
         scientificSplit: workoutData.splitData.split_name,
-        isScientificMode: true
+        isScientificMode: true,
+        scheduledFor: workoutDateInfo.isToday ? 'today' : 'next_training_day',
+        originalRequestDate: getCurrentDate()
       },
       aiConfidenceScore: workoutPlan.aiConfidence || 0.8,
     };
@@ -294,9 +416,19 @@ router.post('/generate-workout', authenticateToken, async (req, res) => {
       workoutPlan: {
         ...workoutPlan,
         id: savedPlan.id,
-        scientificMetadata: workoutPlan.scientificMetadata
+        scientificMetadata: workoutPlan.scientificMetadata,
+        scheduledDate: workoutDateInfo.workoutDate,
+        scheduledDay: workoutDateInfo.dayOfWeek,
+        isScheduledForToday: workoutDateInfo.isToday
       },
-      message: 'Rutina científica generada exitosamente'
+      message: workoutDateInfo.isToday
+        ? 'Rutina científica generada para hoy'
+        : `Rutina científica generada para ${workoutDateInfo.dayOfWeek} (${workoutDateInfo.workoutDate})`,
+      schedulingInfo: {
+        originalRequestDate: getCurrentDate(),
+        scheduledDate: workoutDateInfo.workoutDate,
+        reason: workoutDateInfo.isToday ? 'Hoy es día de entrenamiento' : 'Hoy es día de descanso, rutina programada para próximo día de entrenamiento'
+      }
     });
 
   } catch (error) {
@@ -652,6 +784,247 @@ router.post('/auto-progress', authenticateToken, async (req, res) => {
 });
 
 /**
+ * GET /api/scientific-workouts/debug-assignments
+ * Diagnosticar asignaciones de splits del usuario
+ */
+router.get('/debug-assignments', authenticateToken, async (req, res) => {
+  try {
+    console.log('🔍 [ScientificWorkouts] Debugging user split assignments...');
+
+    const userId = req.user!.id;
+
+    // 1. Obtener asignaciones del usuario
+    const { assignments } = await splitAssignmentService.getUserSplitAssignments(userId);
+
+    // 2. Obtener rutinas en cache
+    const { data: cachedWorkouts, error: cacheError } = await supabase
+      .from('pre_generated_workouts')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('workout_date', new Date().toISOString().split('T')[0])
+      .order('workout_date');
+
+    if (cacheError) {
+      console.error('❌ Error getting cached workouts:', cacheError);
+    }
+
+    // 3. Mapear días de la semana
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const weeklySchedule = {};
+
+    daysOfWeek.forEach(day => {
+      const assignment = assignments.find(a => a.day_name === day);
+      weeklySchedule[day] = assignment ? {
+        hasAssignment: true,
+        splitName: assignment.scientific_splits?.split_name,
+        splitType: assignment.scientific_splits?.split_type,
+        muscleGroups: assignment.scientific_splits?.muscle_groups,
+        isActive: assignment.is_active
+      } : {
+        hasAssignment: false,
+        isRestDay: true
+      };
+    });
+
+    // 4. Verificar cache para hoy
+    const today = new Date().toISOString().split('T')[0];
+    const todayCache = cachedWorkouts?.find(w => w.workout_date === today);
+
+    res.json({
+      success: true,
+      debug: {
+        userId,
+        today,
+        todayDayOfWeek: new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+        weeklySchedule,
+        totalAssignments: assignments.length,
+        cachedWorkouts: cachedWorkouts?.length || 0,
+        todayCache: todayCache ? {
+          splitName: todayCache.split_name,
+          targetMuscleGroups: todayCache.target_muscle_groups,
+          isConsumed: todayCache.is_consumed
+        } : null,
+        recommendations: [
+          assignments.length === 0 ? "❌ No tienes asignaciones de splits configuradas" : "✅ Asignaciones encontradas",
+          todayCache ? "✅ Rutina en cache para hoy" : "⚠️ No hay rutina en cache para hoy",
+          "🔧 Si los datos son incorrectos, necesitas limpiar cache y reconfigurar splits"
+        ]
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ [ScientificWorkouts] Error in debug-assignments:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to debug assignments',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
+ * POST /api/scientific-workouts/fix-corrupted-data
+ * Limpiar datos corruptos y regenerar cache
+ */
+router.post('/fix-corrupted-data', authenticateToken, async (req, res) => {
+  try {
+    console.log('🔧 [ScientificWorkouts] Fixing corrupted data...');
+
+    const userId = req.user!.id;
+    const { clearCache = true, regenerateCache = true } = req.body;
+
+    const results = {
+      cacheCleared: false,
+      cacheRegenerated: false,
+      errors: []
+    };
+
+    // 1. Limpiar cache corrupto
+    if (clearCache) {
+      try {
+        const { error: clearError } = await supabase
+          .from('pre_generated_workouts')
+          .delete()
+          .eq('user_id', userId);
+
+        if (clearError) {
+          results.errors.push(`Error clearing cache: ${clearError.message}`);
+        } else {
+          results.cacheCleared = true;
+          console.log('✅ [ScientificWorkouts] Cache cleared successfully');
+        }
+      } catch (error) {
+        results.errors.push(`Exception clearing cache: ${error.message}`);
+      }
+    }
+
+    // 2. Regenerar cache basado en asignaciones correctas
+    if (regenerateCache && results.cacheCleared) {
+      try {
+        await workoutCacheService.generateCacheForUser(userId, 7);
+        results.cacheRegenerated = true;
+        console.log('✅ [ScientificWorkouts] Cache regenerated successfully');
+      } catch (error) {
+        results.errors.push(`Error regenerating cache: ${error.message}`);
+      }
+    }
+
+    res.json({
+      success: results.errors.length === 0,
+      message: results.errors.length === 0 ?
+        'Datos corruptos corregidos exitosamente' :
+        'Corrección completada con algunos errores',
+      results,
+      nextSteps: [
+        "1. Verifica tus asignaciones de splits en la configuración",
+        "2. Asegúrate de que los días de descanso no tengan asignaciones",
+        "3. Prueba generar una nueva rutina",
+        "4. Si persisten problemas, contacta soporte"
+      ]
+    });
+
+  } catch (error) {
+    console.error('❌ [ScientificWorkouts] Error fixing corrupted data:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fix corrupted data',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
+ * POST /api/scientific-workouts/fix-timezone-bug
+ * Corregir bug de timezone que causa rutinas en días incorrectos
+ */
+router.post('/fix-timezone-bug', authenticateToken, async (req, res) => {
+  try {
+    console.log('🕐 [ScientificWorkouts] Fixing timezone bug...');
+
+    const userId = req.user!.id;
+    const today = new Date().toISOString().split('T')[0];
+
+    // 1. Eliminar rutina incorrecta de hoy si existe
+    const { error: deleteError } = await supabase
+      .from('pre_generated_workouts')
+      .delete()
+      .eq('user_id', userId)
+      .eq('workout_date', today);
+
+    if (deleteError) {
+      console.error('❌ Error deleting corrupted workout:', deleteError);
+    } else {
+      console.log('✅ Deleted corrupted workout for today');
+    }
+
+    // 2. Eliminar plan diario corrupto si existe
+    const { error: deleteDailyError } = await supabase
+      .from('daily_workout_plans')
+      .delete()
+      .eq('user_id', userId)
+      .eq('workout_date', today);
+
+    if (deleteDailyError) {
+      console.error('❌ Error deleting corrupted daily plan:', deleteDailyError);
+    } else {
+      console.log('✅ Deleted corrupted daily plan for today');
+    }
+
+    // 3. Verificar día actual correctamente
+    const todayDate = new Date(today + 'T12:00:00'); // Fix timezone
+    const dayIndex = todayDate.getDay();
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const correctDayName = dayNames[dayIndex];
+
+    // 4. Verificar si hay asignación para hoy
+    const { data: assignment, error: assignmentError } = await supabase
+      .from('user_split_assignments')
+      .select(`
+        *,
+        scientific_splits (
+          id,
+          split_name,
+          split_type,
+          muscle_groups
+        )
+      `)
+      .eq('user_id', userId)
+      .eq('day_name', correctDayName)
+      .eq('is_active', true)
+      .single();
+
+    const isRestDay = !assignment || assignmentError;
+
+    res.json({
+      success: true,
+      message: 'Timezone bug corregido exitosamente',
+      debug: {
+        today,
+        dayIndex,
+        correctDayName,
+        isRestDay,
+        hasAssignment: !!assignment,
+        assignmentDetails: assignment ? {
+          splitName: assignment.scientific_splits?.split_name,
+          muscleGroups: assignment.scientific_splits?.muscle_groups
+        } : null
+      },
+      recommendation: isRestDay ?
+        '✅ Hoy es día de descanso - no se generará rutina' :
+        '⚠️ Hoy tienes entrenamiento - se puede generar rutina'
+    });
+
+  } catch (error) {
+    console.error('❌ [ScientificWorkouts] Error fixing timezone bug:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fix timezone bug',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
  * GET /api/scientific-workouts/progression-stats
  * Obtener estadísticas de progresión del usuario
  */
@@ -963,10 +1336,35 @@ router.get('/auto-workout', authenticateToken, async (req, res) => {
     console.log('🤖 [ScientificWorkouts] Getting auto-generated workout...');
 
     const userId = req.user!.id;
-    const { date } = req.query;
+    const { date, debug } = req.query;
     const workoutDate = (date as string) || getCurrentDate();
 
     console.log(`🤖 [ScientificWorkouts] Fetching auto workout for user ${userId}, date: ${workoutDate}`);
+
+    // 🔍 DEBUG MODE: Mostrar información detallada
+    if (debug === 'true') {
+      const dayOfWeek = new Date(workoutDate).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+      const splitAssignment = await splitAssignmentService.getSplitForDay(userId, dayOfWeek);
+
+      return res.json({
+        success: true,
+        debug: true,
+        debugInfo: {
+          userId,
+          workoutDate,
+          dayOfWeek,
+          splitAssignment: splitAssignment ? {
+            splitName: splitAssignment.split_name,
+            splitType: splitAssignment.split_type,
+            muscleGroups: splitAssignment.muscle_groups,
+            scientificRationale: splitAssignment.scientific_rationale
+          } : null,
+          message: splitAssignment ?
+            `✅ Split encontrado: ${splitAssignment.split_name} - Músculos: ${splitAssignment.muscle_groups?.join(', ')}` :
+            `❌ No hay split asignado para ${dayOfWeek}`
+        }
+      });
+    }
 
     // Obtener rutina del cache o generar si no existe
     const workout = await workoutCacheService.getOrGenerateWorkout(userId, workoutDate);
@@ -1093,8 +1491,11 @@ router.post('/save-split-assignments', authenticateToken, async (req, res) => {
       });
     }
 
+    // Obtener días disponibles del usuario (todos los días excepto domingo por defecto)
+    const userAvailableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
     // Validar asignaciones
-    const validation = splitAssignmentService.validateAssignments(weeklySchedule, weeklyFrequency);
+    const validation = splitAssignmentService.validateAssignments(weeklySchedule, userAvailableDays);
 
     if (!validation.isValid) {
       return res.status(400).json({
