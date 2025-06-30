@@ -33,8 +33,9 @@ export default function AITrainerPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-luxury-black overflow-y-auto">
-        <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="h-screen bg-luxury-black overflow-hidden">
+        <div className="fixed inset-0 flex items-center justify-center pt-16 pb-4 md:pt-20 md:pb-6">
+          <div className="w-full max-w-2xl h-full flex flex-col">
           <Card className="border border-luxury-gold/40 shadow-2xl bg-luxury-charcoal/95 backdrop-blur-sm overflow-hidden rounded-3xl ring-1 ring-luxury-gold/30 shadow-luxury-gold/20">
             <CardHeader className="relative text-center bg-gradient-to-r from-luxury-gold to-light-gold backdrop-blur-sm border-b border-luxury-gold/20 py-8 rounded-t-3xl shadow-lg">
               <div className="absolute inset-0 bg-gradient-to-r from-luxury-black/10 via-transparent to-white/5 rounded-t-3xl"></div>
@@ -52,6 +53,7 @@ export default function AITrainerPage() {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       </div>
     );
@@ -61,7 +63,7 @@ export default function AITrainerPage() {
   if (!trainerConfig || !trainerConfig.isConfigured) {
     console.log('🔧 [AITrainerPage] Showing TrainerSetup - config not found or not configured');
     return (
-      <div className="min-h-screen bg-luxury-black overflow-y-auto">
+      <div className="h-screen bg-luxury-black overflow-hidden">
         <TrainerSetup onConfigured={handleConfigured} />
       </div>
     );
