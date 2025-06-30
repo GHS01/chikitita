@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -393,6 +393,21 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
 
   // 🎪 DETERMINAR SI MOSTRAR ESTILO DE INTERACCIÓN
   const showInteractionStyle = formData.personalityType === 'custom';
+
+  // 🚫 BLOQUEAR SCROLL DE LA PÁGINA COMPLETA EN TODOS LOS DISPOSITIVOS (ANDROID, TABLETS, ETC.)
+  useEffect(() => {
+    // Ocultar scroll en TODOS los dispositivos (móvil, tablet, desktop)
+    document.body.style.overflow = 'hidden';
+
+    // También aplicar a html para mayor compatibilidad
+    document.documentElement.style.overflow = 'hidden';
+
+    // Cleanup: Restaurar scroll al desmontar
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    };
+  }, []);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center pt-16 pb-4 md:pt-20 md:pb-6">
