@@ -33,8 +33,8 @@ export default function Login() {
         title: t('auth.welcomeBack'),
         description: t('auth.loginSuccess'),
       });
-      // Redirect to dashboard after successful login
-      setLocation("/dashboard");
+      // Redirect to dashboard after successful login (dashboard is at root "/")
+      setLocation("/");
     } catch (error) {
       toast({
         title: t('auth.loginFailed'),
