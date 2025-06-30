@@ -395,12 +395,12 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
   const showInteractionStyle = formData.personalityType === 'custom';
 
   return (
-    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-2xl">
-      <Card className="border border-luxury-gold/40 shadow-2xl bg-luxury-charcoal/95 backdrop-blur-sm overflow-hidden rounded-2xl sm:rounded-3xl ring-1 ring-luxury-gold/30 shadow-luxury-gold/20">
+    <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-4 md:py-8 max-w-2xl min-h-screen flex items-start justify-center">
+      <Card className="border border-luxury-gold/40 shadow-2xl bg-luxury-charcoal/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl ring-1 ring-luxury-gold/30 shadow-luxury-gold/20 w-full max-h-[98vh] sm:max-h-[95vh] md:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header Luxury - RESPONSIVE MÓVIL MEJORADO */}
-        <CardHeader className="relative text-center bg-gradient-to-r from-luxury-gold to-light-gold backdrop-blur-sm border-b border-luxury-gold/20 py-6 sm:py-8 -mx-6 -mt-6 mb-0 rounded-t-2xl sm:rounded-t-3xl shadow-lg">
-          {/* Overlay que cubre TODO el header - SIN COMPONENTES BLANCOS PARA MÓVILES */}
-          <div className="absolute inset-0 bg-gradient-to-r from-luxury-black/10 via-transparent to-luxury-black/5 rounded-t-2xl sm:rounded-t-3xl"></div>
+        <CardHeader className="relative text-center bg-gradient-to-r from-luxury-gold to-light-gold backdrop-blur-sm border-b border-luxury-gold/20 py-6 sm:py-8 rounded-t-2xl sm:rounded-t-3xl shadow-lg flex-shrink-0">
+          {/* Overlay que cubre TODO el header - SIN COMPONENTES BLANCOS */}
+          <div className="absolute inset-0 bg-gradient-to-r from-luxury-black/15 via-luxury-black/5 to-luxury-black/15 rounded-t-2xl sm:rounded-t-3xl"></div>
           <div className="relative px-2 sm:px-4 md:px-6">
             <CardTitle className="relative text-xl sm:text-2xl md:text-3xl font-black text-luxury-black bg-clip-text flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-2 drop-shadow-sm">
               {/* Icono Responsivo */}
@@ -444,9 +444,9 @@ export default function TrainerSetup({ onConfigured }: TrainerSetupProps) {
           </div>
         </CardHeader>
 
-        {/* Contenido Luxury - RESPONSIVE MÓVIL MEJORADO */}
-        <CardContent className="p-4 sm:p-8 pt-6 sm:pt-8 bg-luxury-black/60 text-white">
-          <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
+        {/* Contenido Luxury - RESPONSIVE MÓVIL MEJORADO CON SCROLL */}
+        <CardContent className="p-4 sm:p-8 pt-6 sm:pt-8 bg-luxury-black/60 text-white flex-1 overflow-y-auto">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
             {/* Nombre del Entrenador - Luxury */}
             <div ref={setFieldRef('trainerName')} className="space-y-3">
               <Label htmlFor="trainerName" className="text-base font-semibold text-luxury-gold flex items-center gap-2">
